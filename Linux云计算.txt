@@ -3915,3 +3915,5 @@ pod "kube-proxy-689h8" deleted
 
 报错原因：https://blog.csdn.net/qq120631157/article/details/128672524
 资源地址：https://download.csdn.net/download/qq120631157/87382343
+
+第三次提交
