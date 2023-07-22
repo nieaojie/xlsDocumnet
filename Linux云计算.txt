@@ -1,0 +1,3916 @@
+源码包的编译安装：https://blog.csdn.net/weixin_34348805/article/details/89834157
+  1.安装make、gcc
+  2.解压tar包、释放源代码到指定目录
+  3、配置./configure 指定安装目录
+  4、make编译 生成可执行的二进制代码文件
+  5.make install 安装，将编译好的文件安装到指定安装目录
+
+rsync详解：https://blog.csdn.net/qq_44239779/article/details/127232771
+
+
+搭建yum：https://blog.csdn.net/kali_yao/article/details/124223361
+
+
+cobbler装机平台 类似于pxe网络装机：https://hellogitlab.com/OS/Cobbler/
+https://www.cnblogs.com/yanjieli/p/11016825.html
+                                   https://www.shuzhiduo.com/A/ke5jbw2o5r/
+
+
+环境变量：
+   $PATH:提供命令程序的搜寻路径
+添加环境变量的例子：
+#/opt/hello.sh
+hello 
+#hello.sh
+未找到命令(原因是系统中没有hello.sh的环境变量）
+#echo $PATH(查看一下已有的环境变量）
+/user/local/sbin:usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+所以可以将hello.sh添加到环境变量中即可通过hello.sh直接执行命令
+#cp /opt/hello.sh /usr/bin
+#hello.sh
+hello 
+
+umask值：权限掩码
+  与用户创建的目录默认权限有关 755 
+  文档默认权限：644
+  
+  
+网络：
+广域网：WAN
+局域网：LAN
+
+应用层：计算机
+传输层：防火墙
+网络层：路由器
+数据链路层：交换机：交换机是组建网络的基本设备，能够实现不同设备数据共享。
+物理层：网卡
+
+mac地址=物理地址=硬件地址
+
+交换机工作原理
+ 学习，学习源mac地址，记录对应的接口号
+ 广播，向除了数据来源之外的所有接口发送信息
+ 转发，一对一进行数据传递
+ 更新，超过300秒无任何数据通讯，mac地址记录将被删除
+       接口设备更换，或者接口down掉
+  
+VLAN(Virtual LAN)虚拟局域网
+
+为什么引入VLAN
+  交换机的所有接口默认属于同一个广播域
+  随着接入设备的增多，网络中广播增多，降低了网络的效率
+  为了分割广播域，引入了VLAN
+VLAN作用：
+ 控制广播
+ 增加安全
+ 提高带宽利用率
+ 降低了数据延迟
+ 从数据链路层划分广播域,以阻止单播/组播/广播的流量泛滥,提高二层网络的安全性;同时也可以使网络的规划更灵活,提高可管理性
+
+
+中继链路：在实际的企业环境中，会有多台交换机共同作用，在每台交换机上都会根据部门划分VLAN，为了让处于不同交换机上的VLAN之间能够通信，因此我们使用中继（VLAN TRUNK）
+          使得同一个vlan能够跨交换机通信。
+中继链路常用来将一台交换机连接到其他交换机或路由。
+交换机端口有两种模式access（接入链路）和trunk（中继链路），一般我们在连接PC时都选用access模式，在设备之间互联时选用trunk模式
+中继链路和接入链路的区别：接入链路access: 可以承载1个 vlan                         
+                          中继(干道)链路trunk：可以承载多个 vlan
+						  
+Access端口只能允许一个Vlan通过，一般用于连接终端，也是端口默认的类型。
+Trunk端口可以允许多个Vlan通过，一般用于交换机之间的连接:
+
+在不同交换机上相同VLAN成员之间的通信可以通过中继链路和默认链路实现。一般多见中继路由
+						  
+						  
+交换机：使得同一VLAN下的同一或者不同交换机连接的主机之间能够通信 不同交换机同一VLAN需要添加一个中继链路
+路由器：使得不同网段（VLAN）【有歧义】的主机能够相互通信 
+局域网内的主机可以处于同一网段也可以处于不同网段 网段是逻辑概念 局域网是物理概念 不过一般是同一网段
+https://blog.csdn.net/weixin_34387284/article/details/92861927?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-3-92861927-blog-119462449.235%5Ev36%5Epc_relevant_default_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-3-92861927-blog-119462449.235%5Ev36%5Epc_relevant_default_base3&utm_relevant_index=5
+ping借助ICMP进行网络通信（ICMP包）
+
+192.168.111.123/24
+可以说成位于192.168.111网段 也可说成位于192.168.111.0网段
+
+交换机 数据帧转发
+路由器 不同网段的路由转发
+三层交换机=交换机+路由器（网络功能相比路由器比较强大）具备路由功能 也具有一个路由表
+
+可以通过给三层交换机划分VLAN的方式来使得不同网段（不同网段分别设置不同VLAN，然后再给交换机的VLAN接口设置网关形式的IP地址，使得一个交换机端口是一个VLAN也是一个网段，则属于不同网段的主机可以通过该交换机实现网络互通）的主机实现互联 
+
+一般情况下三层交换机的使用情况：由于三层交换的端口十分珍贵 若一个主机就占用一个端口那就会造成极大的浪费。所以可以通过先使用一台普通交换机连接几台主机，划分为不同的VLAN（一般情况下不同网段划分为不同VLAN），再将该普通交换机连接至三层交换机上（交换机和交换机之间通过中继链路实现）这样的话就极大的节约了三层交换机的端口。在该网路中象征网段的IP仍然是要设置给三层交换机端口的
+
+三层交换机网络通信时 下面的信息源网段中的一台主机先把自己的请求发给普通交换机 普通交换机记录此主机的信息是属于哪一网段的VLAN中的，再把该信息转发给三层交换机 三层交换机通过查找路由表可以找到该信息的目的网段然后再转发给普通交换机 再发给目的网段的VLAN中即可。
+
+路由器不仅仅是用来连接不同网段的，而且可以用来连接特殊的网络设备 这一点也是为什么三层交换机出现以后 路由器也不是无用武之地了
+
+动态路由：自动更新路由表（rip协议 OSPF协议 BGP协议）使用动态路由协议OSPF配置网络，达到全网互通的目的。
+
+
+
+
+
+
+ACL访问控制列表：https://www.cnblogs.com/walkwaters/p/13797751.html
+
+NAT：地址转换，将内部与外部地址进行转换，实现内外网互通
+NAT实现方式：静态转换和Easy IP
+静态NAT 主要在服务器连接外部网络时使用 一对一转换
+easyIP：用在仅需要由内到外的访问，一对多转换，有随机端口号
+
+stp生成树协议：可以在一个环形网络中避免广播风暴
+
+vrrp 虚拟路由冗余协议，用来做网关备份，增加网络可靠
+vrrp可以实现负载均衡：互为主备（互为主从）； 
+
+
+
+
+
+shell：
+pstree查看进程树
+脚本执行方式：
+1.赋予x执行权限,然后使用绝对或者相对路径运行该文件
+2.使用解释器直接执行脚本，即使没有x权限也可以
+  bash test.sh
+3.使用source命令执行脚本
+  source test.sh
+ 
+常量：固定不变的内容 
+变量：存储可能会发生变化的内容，增加脚本灵活
+变量类型：
+1.自定义变量：变量名称可以使用字母数字下划线，不能以数字开头，不能使用特殊符号
+#echo ${a}RMB
+10RMB
+#unset a #取消a的定义
+2.环境变量：
+#echo $USER
+root
+#echo $UID
+0
+#echo $HOME 
+添加环境变量：
+[root@localhost temp]# vim test1.sh
+[root@localhost temp]# chmod u+x test1.sh
+[root@localhost temp]# ./test1.sh
+hello
+[root@localhost temp]# test1.sh
+-bash: test1.sh: 未找到命令
+[root@localhost temp]# echo $PATH
+/usr/local/jdk1.8.0_171/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+[root@localhost temp]# cp test1.sh /usr/local/bin/
+[root@localhost temp]# test1.sh
+hello
+
+3.位置变量：$1 $2 $3
+4.预定义变量：$0 $$ $? $# $*
+  1 #!/bin/bash
+  2 echo $1
+  3 echo $2
+  4 echo $3
+  5 echo $$   #当前脚本的进程号
+  6 echo $#   #位置变量的个数 
+  7 echo $*   #所有位置变量
+  8 echo $?   #上一条指令的结果，0是正常非0是异常
+  9 echo $0   #执行脚本的名字
+ 10 echo $!   #最后一条放入后台的程序进程号
+ 
+[root@localhost temp]# ./test2.sh a b c
+a
+b
+c
+2646
+3
+a b c
+0
+./test2.sh // #echo $0
+#echo $!没出任何结果
+
+env 查看所有的环境变量
+set 查看所有变量
+
+使用位置变量的实例：
+#vim test3.sh
+#!/bin/bash
+useradd $1
+echo $2 | passwd --stdin $1
+
+#bash test3.sh xyz 789
+结果：
+更改用户xyz的密码。
+passwd:所有的身份验证令牌已经成功更新。 
+
+
+
+
+引号用法：
+“” 界定范围
+'' 界定范围，可以屏蔽特殊符号
+`` 获取指令的结果<=>$()
+实例：
+[root@localhost temp]# abc=date //定义变量abc,内容是date
+[root@localhost temp]# echo $abc
+date
+[root@localhost temp]# abc='abc'
+[root@localhost temp]# echo $abc
+abc
+[root@localhost temp]# abc="date"
+[root@localhost temp]# echo $abc
+date
+[root@localhost temp]# abc=`date`//定义变量abc,内容是date命令执行的结果
+[root@localhost temp]# echo $abc
+2023年 05月 19日 星期五 12:45:02 CST
+[root@localhost ~]# echo '$a'
+$a
+
+
+shell实例1:
+  1 #!/bin/bash
+  2 read -p "请输入用户名" u
+  3 useradd $u
+  4 read -p "请输入密码" p
+  5 echo $p | passwd --stdin $u
+[root@localhost ~]# bash test2.sh
+请输入用户名eee
+请输入密码111
+更改用户 eee 的密码 。
+passwd：所有的身份验证令牌已经成功更新。
+
+#stty -echo //将回显功能关闭
+#stty echo //将回显功能恢复
+
+shell实例1-1（隐藏输入密码）
+使用回显功能改造上述例子
+  1 #!/bin/bash
+  2 read -p "请输入用户名" u
+  3 useradd $u
+  4 stty -echo
+  5 read -p "请输入密码" p
+  6 stty echo
+  7 echo $p | passwd --stdin $u
+[root@localhost ~]# bash test2.sh
+请输入用户名h
+请输入密码
+更改用户 h 的密码 。
+passwd：所有的身份验证令牌已经成功更新。
+
+
+发布全局变量
+[root@localhost ~]# export a=10 //创建变量 并发布为全局变量
+[root@localhost ~]# bash
+[root@localhost ~]# echo $a
+10
+[root@localhost ~]# bash //开启新的解释器（进入子进程） 退出命令：exit
+[root@localhost ~]# echo $a
+10
+
+取消全局变量
+[root@localhost ~]# export -n a//撤销全局变量，恢复局部变量
+[root@localhost ~]# echo $a
+10
+[root@localhost ~]# bash
+[root@localhost ~]# echo $a
+此处为输出结果 空行
+
+局部变量
+[root@localhost ~]# a=10
+[root@localhost ~]# echo $a
+10
+[root@localhost ~]# bash
+[root@localhost ~]# echo $a
+此处为输出结果 空行
+
+shell中的运算：
+expr 1 + 1(expr空格1空格+空格1）
+\转义符号，屏蔽之后一个字符的特殊含义
+expr：本身不仅具有加减乘除运算的能力也具有输出的能力
+expr <=> echo $[] <=> echo $(())  //$[]只有计算功能无输出功能，所以需要搭配echo使用
+
+expr和echo都支持使用变量 但二者有所不同：
+1:expr 
+#a=10
+#expr $a \* $a
+100
+2:echo 
+#echo $[a*a]  //只需写一次$符号即可
+100  
+
+let 可以改变变量本身的值，不显示结果
+尽量写成：let a++ let a*=10 let a/=5 let a--   echo $a //查看结果
+[root@localhost ~]# a=10
+[root@localhost ~]# echo $a
+10
+[root@localhost ~]# let a=a+1
+[root@localhost ~]# echo $a
+11
+[root@localhost ~]# let a=a%3
+[root@localhost ~]# echo $a
+2
+
+上述两种方法都不能计算小数 所以引入一种新的用法：bc计算器//bc计算器本身是交互式的 但是可以使用echo和管道符转化为非交互式
+eg:
+[root@localhost ~]# echo "1.1+1" | bc
+2.1
+[root@localhost ~]# echo "scale=3;10/3" |bc  //使用scale=3来定义后面小数的输出长度
+3.333
+
+条件判断实例
+2.1
+[root@localhost ~]# [ abc == abc ]
+[root@localhost ~]# echo $?
+0
+[root@localhost ~]# [ abc == bcc ]
+[root@localhost ~]# echo $?//结果正确输出0，不正确输出非0
+1
+
+#A&&B //仅当A命令执行成功，才执行B命令
+#A||B //仅当A命令执行失败，才执行B命令
+; 前面任务执行完毕后，继续执行后续任务，前后无逻辑关系
+[root@localhost ~]# [ $USER == root ] && echo 123 
+123
+[root@localhost ~]# [ $USER != root ] || echo 123
+123
+[root@localhost ~]# [ $USER == root ] && echo 123 && echo 123
+123
+123
+[root@localhost ~]# [ $USER == root ] && echo "我是管理员" || echo "我不是管理员"
+我是管理员
+
+//
+使用-z 判断是否为空 继续优化上述脚本
+-e:判断对象是否存在（不管是目录还是文件）
+-d:判断对象是否为目录（存在且是目录）
+-f：判断对象是否为文件（存在且是文件）
+-r：是否可读（对root无效）
+-w: 是否可写（对root无效）
+-x：是否可执行
+eg:
+  1 #!/bin/bash
+  2 read -p "请输入用户名" u
+  3 [ -z $u ] && echo "你倒是给个名字啊" && exit #使用-z 优化创建用户的脚本，如果没有输入    用户名直接回车退出脚本
+  4 useradd $u
+  5 stty -echo
+  6 read -p "请输入密码" p
+  7 stty echo
+  8 echo $p | passwd --stdin $u
+[root@localhost ~]# bash test2.sh
+请输入用户名
+你倒是给个名字啊
+
+-eq等于 -ne不等于 -gt大于 -ge大于等于 -lt小于 -le小于等于
+[root@localhost ~]# [ 123 -eq 0123 ]//比较数字大小
+[root@localhost ~]# echo $?
+0
+[root@localhost ~]# [ 123 == 0123 ]//比较字符串
+[root@localhost ~]# echo $?
+1
+编写脚本 每两分钟检查系统登录的用户数量，如果超过三人 则发邮件给管理员报警
+
+凑脚本素材：
+who | wc -l
+[ 用户数量 -gt 3 ] && echo "有多人使用服务器，请检查" | mail -s test root
+每两分钟 ：crontab -e 
+eg:
+  1 #!/bin/bash
+  2 n=`who | wc -l`
+  3 [ $n -gt 3 ] && echo "有多人使用服务器，请检查" | mail -s test root
+  或者
+  [ $n -gt 3 ] && mail -s test root < a.txt //需要提前准备a.txt文件，文件的内容就是邮件内容
+  
+[root@localhost test]# chmod u+x test.sh
+[root@localhost test]# crontab -e
+   */2 * * * * ./home/test/test.sh
+[root@localhost test]# ./test.sh
+//当有多人登录服务器时 mail即可查看
+
+if单分支
+if 条件测试； then
+   命令序列
+fi
+
+if 条件测试
+then 
+    命令序列
+fi 
+
+if双分支
+if 条件测试; then
+    命令序列1
+else
+    命令序列2
+fi
+ping -c(发送的分组个数） 3 -i（在发送每个分组后等待的秒数） 0.2 -w（返回反馈信息的时间间隔） 1 192.168.111.130
+
+eg:
+[root@localhost test]# cat test2.sh
+#!/bin/bash
+ping -c 3 -i 0.2 -w 1 192.168.111.130 &> /dev/null
+if [ $? -eq 0 ];then
+ echo "通了"
+else
+ echo"不通"
+fi
+[root@localhost test]# bash test2.sh
+通了
+
+
+if多分支
+if 条件测试; then
+    命令序列1
+elif 条件测试; then
+    命令序列2
+elif 条件测试; then
+    命令序列3
+else
+    命令序列x
+fi
+
+eg:
+[root@localhost test]# cat test1.sh
+#!/bin/bash
+x=$[RANDOM%11]
+read -p "请输入一个数字(0-10)" n
+if [ $x -eq $n ];then
+echo "猜对了!"
+elif [ $x -gt $n ];then
+echo "猜小了"
+else
+echo "猜大了"
+fi
+[root@localhost test]# bash test1.sh
+请输入一个数字(0-10)4
+猜大了
+
+for循环
+for   变量名  in 值列表
+do
+   命令序列
+done
+eg1（无变量）:
+[root@localhost test]# cat test3.sh
+#!/bin/bash
+for i in a b
+do
+    echo 123
+done
+[root@localhost test]# bash test3.sh
+123
+123
+eg2(在循环中放置变量要通过seq方式）:（{1..100}可以用`seq 100`来表示）
+[root@localhost test]# cat test4.sh
+#!/bin/bash
+a=10
+for i in `seq $a`
+do
+  echo $i
+done
+[root@localhost test]# bash test4.sh
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+eg3(利用for循环测试多台主机是否可以连通）:
+[root@localhost test]# cat test5.sh
+#!/bin/bash
+for i in {125..130}
+do
+ping -c 3 -i 0.2 -w 1 192.168.111.$i &> /dev/null
+if [ $? -eq 0 ]; then
+  echo "192.168.111.$i通了"
+else
+  echo "192.168.111.$i不通"
+fi
+done
+[root@localhost test]# bash test5.sh
+192.168.111.125不通
+192.168.111.126不通
+192.168.111.127不通
+192.168.111.128不通
+192.168.111.129不通
+192.168.111.130通了
+eg4(eg3的升级版）:
+[root@localhost test]# cat test5.sh
+#!/bin/bash
+a=0
+b=0
+for i in {125..130}
+do
+ping -c 3 -i 0.2 -w 1 192.168.111.$i &> /dev/null
+if [ $? -eq 0 ]; then
+  echo "192.168.111.$i通了"
+  let a++
+else
+  echo "192.168.111.$i不通"
+  let b++
+fi
+done
+echo "通了的台数为:" $a
+echo "不通的台数为:" $b
+[root@localhost test]# bash test5.sh
+192.168.111.125不通
+192.168.111.126不通
+192.168.111.127不通
+192.168.111.128不通
+192.168.111.129不通
+192.168.111.130通了
+通了的台数为: 1
+不通的台数为: 5
+
+while:
+正常版：
+while 条件测试
+do 
+   任务序列
+done
+
+永远执行版：
+while :
+do 
+   任务序列
+done
+eg:
+[root@localhost test]# cat test6.sh
+#!/bin/bash
+x=$[RANDOM%101]
+a=0
+while :
+do
+   let a++
+   read -p "请输入一个数字：" n
+   if [ $n -eq $x ]; then
+       echo "猜对了，猜的次数为："$a
+       exit
+   elif [ $n -lt $x ];then
+       echo "猜小了"
+   else
+       echo "猜大了"
+   fi
+done
+[root@localhost test]# bash test6.sh
+请输入一个数字：50
+猜大了
+请输入一个数字：25
+猜大了
+请输入一个数字：10
+猜大了
+请输入一个数字：5
+猜对了，猜的次数为：4
+
+
+case
+case分支，是简化版的if，代码编写比if精简，但功能不如if强大
+
+case 变量 in
+模式1)
+    命令序列;;
+模式2)
+    命令序列2;;
+模式*)
+    命令序列3
+esac
+
+函数：
+
+函数名()
+{
+}
+
+eg:
+
+  1 #!/bin/bash
+  2 abc(){    //定义函数 名字为abc
+  3 mkdir $1   //函数中的任务是创建并进入目录
+  4 cd $1
+  5 }
+  6
+  7
+  8 abc abc     //调用函数（函数名是刚刚创建的abc），创建并进入abc目录
+ 脚本写完后使用source test4.sh测试
+ 
+ exit  终止脚本程序
+ break 跳出循环，执行循环后任务
+ continue 结束本次循环，继续下一次循环
+
+eg1:
+  1 #!/bin/bash
+  2 x=0
+  3 while :
+  4 do
+  5   read -p "请任意输入一个数字（0表示结束）" n
+  6   [ $n -eq 0 ] && break
+  7   let x+=n
+  8 done
+  9 echo "所有数字之和是$x"
+[root@localhost opt]# bash test5.sh
+请任意输入一个数字（0表示结束）2
+请任意输入一个数字（0表示结束）4
+请任意输入一个数字（0表示结束）9
+请任意输入一个数字（0表示结束）0
+所有数字之和是15
+eg2:
+
+  1 #!/bin/bash
+  2 x=0
+  3 while :
+  4 do
+  5   read -p "请任意输入一个数字（0表示结束）" n
+  6 [ -z $n ] || [ $n -eq 0 ] && break//没给任何数字或者给0都是退出循环
+  7   let x+=n
+  8 done
+  9 echo "所有数字之和是$x"
+[root@localhost opt]# bash test5.sh
+请任意输入一个数字（0表示结束）1
+请任意输入一个数字（0表示结束）4
+请任意输入一个数字（0表示结束）5
+请任意输入一个数字（0表示结束）
+所有数字之和是10
+
+
+计算用$[]  特殊字符用`` <=> $()
+eg(找出6的倍数并分别加上10):
+
+  1 #!/bin/bash
+  2 x=1
+  3 while [ $x -le 20 ]
+  4 do
+  5  let x+=1
+  6  xx=$[ x%6 ]
+  7  [ $xx -ne 0 ] &&  continue //如果余数不是0，结束本次循环，进入下一次循环
+  8  echo $[ x +10 ]'是6的倍数加10的结果'
+ 10 done
+[root@localhost opt]# bash test6.sh
+16是6的倍数加10的结果
+22是6的倍数加10的结果
+28是6的倍数加10的结果
+
+1.字符串截取
+eg(从62个字符串中随机截取一个字符输出):
+
+  1 #!/bin/bash
+  2 a=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+  3 x=$[RANDOM%62]
+  4 echo ${a:x:1}
+
+[root@localhost opt]# bash teat7.sh
+N
+[root@localhost opt]# bash teat7.sh
+w
+[root@localhost opt]# bash teat7.sh
+P
+eg(升级案例）:
+(思考如何得到八位随机密码):
+  1 #!/bin/bash
+  2 for i in {1..8}
+  3 do
+  4 a=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+  5 x=$[RANDOM%62]
+  6 pass=${a:x:1}
+  7 pass2=$pass2$pass
+  8 done
+  9 echo $pass2
+[root@localhost opt]# bash teat7.sh
+fSQP5zFM
+[root@localhost opt]# bash teat7.sh
+6xBwpFzU
+[root@localhost opt]# bash teat7.sh
+KcCA1cEK
+2.字串替换：
+echo ${变量名/old/new}  //替换一个(也可以实现删除效果 即是替换为空格）
+echo ${变量名//old/new}  //替换所有(也可以实现删除效果 即是替换为空格）
+eg:
+[root@localhost opt]# a=aabbcc
+[root@localhost opt]# echo ${a/aa/88}
+88bbcc
+[root@localhost opt]# echo ${a/a/8}
+8abbcc
+[root@localhost opt]# echo ${a/b/8}
+aa8bcc
+[root@localhost opt]# echo ${a/bb/8}
+aa8cc
+[root@localhost opt]# echo ${a/bb/88}
+aa88cc
+[root@localhost opt]# echo ${a//b/88}
+aa8888cc
+[root@localhost opt]# echo ${a//b/8}
+aa88cc
+
+3.字串删除：
+echo ${a#}  掐头
+echo ${a%}  去尾
+[root@localhost opt]# a=`head -1 /etc/passwd`//定义变量
+[root@localhost opt]# echo $a
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# echo ${a#root}//从左往右删除，删除第一个root
+:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# echo ${a#root:x}
+:0:0:root:/root:/bin/bash
+[root@localhost opt]# echo ${a##root}
+:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# echo ${a##*root}//从左往右删除，删除到最后一个root（包括root及root前面所有的字符）
+:/bin/bash
+
+[root@localhost opt]# echo ${a%bash}
+root:x:0:0:root:/root:/bin/
+[root@localhost opt]# echo ${a%%:*}
+root
+（对比案例）：
+[root@localhost opt]# echo ${a%root*}
+root:x:0:0:root:/
+[root@localhost opt]# echo ${a#*x:}
+0:0:root:/root:/bin/bash
+
+eg(使用字串删除功能，编写批量修改扩展名的脚本):
+
+[root@localhost opt]# touch abc{1..10}.txt
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost opt]# ls
+abc        abc2.txt  abc5.txt  abc8.txt    rh        test5.sh
+abc10.txt  abc3.txt  abc6.txt  abc9.txt    teat7.sh  test6.sh
+abc1.txt   abc4.txt  abc7.txt  containerd  test4.sh
+
+  1 #!/bin/bash
+  2 for i in `ls *.txt`
+  3 do
+  4    x=${i%.*}
+  5    mv $i $x.doc
+  6 done
+
+[root@localhost opt]# bash test7.sh
+[root@localhost opt]# ls
+abc        abc2.doc  abc5.doc  abc8.doc    rh        test5.sh
+abc10.doc  abc3.doc  abc6.doc  abc9.doc    teat7.sh  test6.sh
+abc1.doc   abc4.doc  abc7.doc  containerd  test4.sh  test7.sh
+
+eg(上述案例改进版)(可以任意切换两种文件格式):
+  1 #!/bin/bash
+  2 for i in `ls *.$1`
+  3 do
+  4    x=${i%.*}
+  5    mv $i $x.$2
+  6 done
+[root@localhost opt]# bash test7.sh doc txt
+[root@localhost opt]# ls
+abc        abc2.txt  abc5.txt  abc8.txt    rh        test5.sh
+abc10.txt  abc3.txt  abc6.txt  abc9.txt    teat7.sh  test6.sh
+abc1.txt   abc4.txt  abc7.txt  containerd  test4.sh  test7.sh
+
+
+定义变量初值：
+echo  ${变量值:-初值}
+echo  ${p:-123}  //定义备用值，如果变量p有值则不使用备用值
+eg(定义变量初值（备用值)):
+  1 #!/bin/bash
+  2 read -p "请输入用户名" u
+  3 useradd $u
+  4 read -p "请输入密码" p
+  5
+  6 echo ${p:-123} | passwd --stdin $u
+[root@localhost opt]# bash test9.sh
+请输入用户名e
+请输入密码          //未输入密码 则使用默认值123
+更改用户 e 的密码 。
+passwd：所有的身份验证令牌已经成功更新。
+[root@localhost opt]# bash test9.sh
+请输入用户名r
+请输入密码wer
+更改用户 r 的密码 。
+passwd：所有的身份验证令牌已经成功更新。
+
+
+正则表达式：
+基本正则符号
+^匹配开头字符  $匹配结尾字串   ^$匹配空格  
+1、常用的元字
+
+代码    说明
+.       匹配除换行符以外的任意字符
+\w      匹配字母或数字或下划线或汉字
+\s      匹配任意的空白符
+\d      匹配数字
+\b      匹配单词的开始或结束
+^       匹配字符串的开始
+$       匹配字符串的结束
+()      子集
+[]      范围词
+{n,m}   匹配长度 
+{ }，（），/，$，#，&，*, .等特殊字符都需要转义 \
+举例：
+匹配-QQ号必须为5位到12位数字时：^\d{5,12}$
+匹配-固定电话的：0\d\d-\d\d\d\d\d\d\d\d
+
+直接定义：    /正则表达式/[修饰符]
+{ }，（），/，$，#，&，*, .等特殊字符都需要转义 \
+i 忽略大小写
+g 全局匹配
+m 多行匹配
+[abc]  表示a,b,c中的任意字符
+[^abc] 表示不能是a,b,c中的任意一个
+
+    ?等价于匹配长度{0,1}
+　　*等价于匹配长度{0,} 
+　　+等价于匹配长度{1,}
+　　\d等价于[0-9]
+    \D等价于[^0-9]
+　　\w等价于[A-Za-z_0-9]
+    \W等价于[^A-Za-z_0-9]。
+     ^ 开始
+　　（） 域段
+　　[] 包含,默认是一个字符长度
+　　[^] 不包含,默认是一个字符长度
+　　{n,m} 匹配长度 
+　　. 任何单个字符(\. 字符点)
+　　| 或
+　　\ 转义
+　　$ 结尾
+　　[A-Z] 26个大写字母
+　　[a-z] 26个小写字母
+　　[0-9] 0至9数字
+    [A-Za-z0-9] 26个大写字母、26个小写字母和0至9数字
+	"/"是表达式开始和结束的标记，“\”可以将后面出现的字符标记为特殊字符
+	
+2、 常用的限定符
+
+代码/语法  说明
+*          重复零次或更多次
++          重复一次或更多次
+?          重复零次或一次
+{n}        重复n次
+{n,}       重复n次或更多次
+{n,m}      重复n到m次
+举例：
+匹配-Windows后面跟1个或更多数字：Windows\d+
+匹配-一行的第一个单词：^\w+
+ 
+3、常用的反义代码
+
+代码/语法   说明
+\W          匹配任意不是字母，数字，下划线，汉字的字符
+\S          匹配任意不是空白符的字符
+\D          匹配任意非数字的字符
+\B          匹配不是单词开头或结束的位置
+[^x]        匹配除了x以外的任意字符
+[^aeiou]    匹配除了aeiou这几个字母以外的任意字符
+举例：
+匹配- 不包含空白符的字符串： \S+
+匹配- 用尖括号括起来的以a开头的字符串： <a[^>]+>
+
+
+ 
+5、懒惰限定符
+ 
+代码/语法  说明
+*?         重复任意次，但尽可能少重复
++?         重复1次或更多次，但尽可能少重复
+??         重复0次或1次，但尽可能少重复
+{n,m}?     重复n到m次，但尽可能少重复
+{n,}?      重复n次以上，但尽可能少重复
+ 
+6、其他
+ 
+代码/语法       说明
+\a              报警字符(打印它的效果是电脑嘀一声)
+\b              通常是单词分界位置，但如果在字符类里使用代表退格
+\t              制表符，Tab
+\r              回车
+\v              竖向制表符
+\f              换页符
+\n              换行符
+\e              Escape
+\0nn            ASCII代码中八进制代码为nn的字符
+\xnn            ASCII代码中十六进制代码为nn的字符
+\unnnn          Unicode代码中十六进制代码为nnnn的字符
+\cN             ASCII控制字符。比如\cC代表Ctrl+C
+\A              字符串开头(类似^，但不受处理多行选项的影响)
+\Z              字符串结尾或行尾(不受处理多行选项的影响)
+\z              字符串结尾(类似$，但不受处理多行选项的影响)
+\G              当前搜索的开头
+\p{name}        Unicode中命名为name的字符类，例如\p{IsGreek}
+(?>exp)         贪婪子表达式
+(?<x>-<y>exp)   平衡组
+(?im-nsx:exp)   在子表达式exp中改变处理选项
+(?im-nsx)       为表达式后面的部分改变处理选项
+(?(exp)yes|no)  把exp当作零宽正向先行断言，如果在这个位置能匹配，使用yes作为此组的表达式；否则使用no
+(?(exp)yes)     同上，只是使用空表达式作为no
+(?(name)yes|no) 如果命名为name的组捕获到了内容，使用yes作为表达式；否则使用no
+(?(name)yes)    同上，只是使用空表达式作为no
+
+\{m\} 表示匹配前面字符m次,也就是说前面字符出现m次的行会被匹配
+eg:
+[root@localhost ~]# grep root txt   //找有root的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep bash$ txt  //找有以bash结尾的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep ^root txt   //找有以root开头的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep ^$ txt      //找空行
+
+^放在[]外表示匹配行首出现[]中字符的行，也就是咱们前面说的锚定行首；而^放在[]内表示“排除、非”的意思，即表示匹配指定范围外的任意单个单词。
+[root@localhost ~]# grep [rot] txt  //查找有字母r或者o或者t的行
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# grep [bin] txt  
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# grep bas[hg] txt   //查找有bash或者basg的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep [^rot] txt     //查找拥有除了r或者o或者t的行
+root:x:0:0:root:/root:/bin/bash       
+bin:x:1:1:bin:/bin:/sbin/nologin
+
+[root@localhost ~]# grep "[a-z]" txt          //找有小写字母的行
+[root@localhost ~]# grep "[^a-z]" txt         //找拥有除了小写字母的行
+[root@localhost ~]# grep "[A-Z]" /etc/shadow  //找有大写字母的行
+[root@localhost ~]# grep "[^A-Z]" /etc/shadow  //找拥有除了大写字母的行
+[root@localhost ~]# grep "[0-9]" /etc/shadow   //找数字
+
+*表示其前面的字符连续出现任意次
+在正则表达式中，.表示匹配任意单个字符（换行符除外）
+# grep roo. txt         //找roo开头 后面追加1个任意字符的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep ro.. txt  //找ro开头 后面追加2个任意字符的行
+root:x:0:0:root:/root:/bin/bash   
+[root@localhost ~]# grep . txt     //找任意单个字符
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# grep .oot txt    //找某字符开头后面是oot的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep * txt      //不能单独使用 什么也找不到
+[root@localhost ~]#
+[root@localhost ~]# grep ro*ot txt  //找root 第一个o可以出现任意次
+root:x:0:0:root:/root:/bin/bash     
+[root@localhost ~]# grep ro*t txt    //找rot o可以出现任意次
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep bo*i txt     //找boi o可以出现任意次
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# grep ".*" txt      //找任意
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+
+\{m\} 表示匹配前面字符m次,也就是说前面字符出现m次的行会被匹配
+\{m,\} 至少匹配前面字符m次
+\{m,n\} 匹配前面字符 最少m次，最多n次均可以
+\( \)表示分组，所谓的分组就是把\( \) 中出现的内容当作一个总体
+\(qin\)\{2\}就是将qin当作一个总体，再和后面的\{2\} 结合起来表示匹配qin两次
+ab\(ef\)\{2\}，这个正则应该不难看出它表示的是abefef吧。
+\？表示其前面的字符连续出现0次或者1次
+\+ 表示其前面的字符连续出现1次或者屡次，也就是说，\+前面的字符至少要连续出现一次才能匹配上
+"/"是表达式开始和结束的标记，“\”可以将后面出现的字符标记为特殊字符
+
+[root@localhost ~]# grep "ro\{2,5\}t" txt  //找root或者rooot或者roooot或者rooooot
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep "ro\{2,3\}t" txt //找root或者rooot
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep "ro\{2\}t" txt   //找root
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep "ro\{2,\}t" txt  //找rot,o可以出现两次及两次以上
+root:x:0:0:root:/root:/bin/bash
+扩展正则（上面的高级版本）:
+[root@localhost ~]# grep "ro+t" txt    //grep不支持扩展正则
+[root@localhost ~]#
+[root@localhost ~]# egrep "ro+t" txt   //找rot o可以出现一次及以上
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# egrep "ro?t" txt   //找rot o可以出现0次或者1次
+[root@localhost ~]# egrep "ro?ot" txt  //找root 第一个o可以出现0次或者1次
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# grep "ro\{0,1\}ot" txt //使用基本正则实现相同效果
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# egrep "ro{0,1}ot" txt //扩展正则更精简
+root:x:0:0:root:/root:/bin/bash
+
+\b 代表的有空 空格 tab 特殊符号(*/%等)
+[root@localhost ~]# egrep "r|o|t" txt    //找r或o或t
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# egrep "bash|nologin" txt  //找bash或nologin
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# egrep "\bbin\b" txt      //找bin 前后不能是数字,字母,下划线(也即是\b并不代表数字字母或者下划线)
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+egrep：使用扩展正则表达式来构建模式，相当于grep –E、通常写成egrep、用法基本上跟grep的相同、只是有些不需要\转译
+
+sed: 流式编辑器，可以非交互式修改文本，逐行操作
+增删改查
+
+使用方法 ：
+一.前置命令 | sed 选项  (定址符)指令
+二.sed | 选项  (定址符)指令  文本
+
+选项 
+-n 屏蔽默认输出
+-r 支持扩展正则
+-i 写入文件  真的会修改系统文件
+sed -e  是可以在一行里执行多条命令 
+
+指令：
+下面看看sed工具的p指令案例集锦：
+p 输出指定内容
+[root@localhost ~]# head -5 /etc/passwd > txt
+[root@localhost ~]# cat txt
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed 'p' txt      //输出所有行2次
+root:x:0:0:root:/root:/bin/bash
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed -n 'p' txt    //输出所有行1次
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed -n '1p' txt  //输出第1行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# sed -n '1,2p' txt  //输出第1到2行
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# sed -n '2p' txt    //输出第2行
+bin:x:1:1:bin:/bin:/sbin/nologin
+[root@localhost ~]# df | sed -n '1p'  //输出df指令生成的文本中第1行
+文件系统                   1K-块     已用    可用 已用% 挂载点
+
+[root@localhost ~]# sed -n '1,+2p'  txt   //输出第一行及第一行后面的两行
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+[root@localhost ~]# sed -n '1p;3p'  txt  //输出第一行 第三行
+root:x:0:0:root:/root:/bin/bash
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+[root@localhost ~]# sed -n '1~2p'  txt   //输出第一行后面间隔两行才输出一次 即是奇数行135……
+root:x:0:0:root:/root:/bin/bash
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed -n '2~2p'  txt   //输出第二行后面间隔两行才输出一次 即是偶数行246……
+bin:x:1:1:bin:/bin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+
+[root@localhost ~]# sed -n '/^root/p' txt    //使用正则匹配查找内容
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# sed -n '/bash$/p' txt   //输出以bash结尾的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# sed -n '$=' txt          //输出最后一行的行号
+5
+[root@localhost ~]# sed -n '=' txt            //输出每一行的行号
+1
+2
+3
+4
+5
+[root@localhost ~]# sed -n '$=' /etc/passwd     //查看主机所有账户数量
+46
+[root@localhost ~]# cat /etc/passwd | wc -l      //查看主机所有账户数量
+46
+[root@localhost ~]# sed -n '/bin/p' txt
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed -n '/^bin/p' txt
+bin:x:1:1:bin:/bin:/sbin/nologin
+
+下面看看sed工具的d指令案例集锦：
+d 删除
+在使用d参数时尽量不要使用-n选项 这样可以便于观察结果的变化
+[root@localhost ~]# sed '1d' txt   //删除第一行
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed '2,5d' txt   //删除2到5行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost ~]# sed '2,+1d' txt   //删除第2行以及后面1行
+root:x:0:0:root:/root:/bin/bash
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed '1~2d' txt     //删除奇数行
+bin:x:1:1:bin:/bin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+
+[root@localhost ~]# sed -i '5d' txt  //删除第5行（-i选项表示真的对系统文件进行了修改)
+[root@localhost ~]# sed ' /^root/d' txt   //删除以root开头的行
+[root@localhost ~]# sed -r ' /bash|nologin/d' txt  //使用扩展正则的话要添加-r选项(这里使用了|属于扩展正则)
+
+下面看看sed工具的s指令案例集锦：
+s替换
+sed 's/old/new/'
+[root@localhost ~]# vim test.txt
+[root@localhost ~]# cat test.txt
+2017 2011 2018
+2017 2017 2024
+2017 2017 2017
+[root@localhost ~]# sed 's/2017/AAAA/' test.txt  //任意一行默认第一个2017替换为AAAA
+AAAA 2011 2018
+AAAA 2017 2024
+AAAA 2017 2017
+[root@localhost ~]# sed 's/2017/AAAA/g' test.txt //任意一行任意一个的2017全都替换成AAAA
+AAAA 2011 2018
+AAAA AAAA 2024
+AAAA AAAA AAAA
+[root@localhost ~]# sed 's/2017/AAAA/3' test.txt //针对任意一行第三个2017替换为AAAA
+2017 2011 2018
+2017 2017 2024
+2017 2017 AAAA
+[root@localhost ~]# sed -e '3s/2017/AAAA/2;3s/2017/AAAA/2' test.txt   //只更换第三行的最后两个2017
+（因为从第二个2017开始替换 所以后面的数字是2 又因为替换完第二个2017后 第三行一共还有两个2017 所以第三列的2017现在就成了位于第三行的第二个2017 所以后面的数字也是2）
+2017 2011 2018
+2017 2017 2024
+2017 AAAA AAAA
+ 
+将/bin/bash替换为/sbin/sh
+[root@localhost ~]# cat txt
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed 's#/bin/bash#/sbin/sh#' txt  //更换替换符号为#
+root:x:0:0:root:/root:/sbin/sh
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost ~]# sed 's(/bin/bash(/sbin/sh(' txt   //更换替换符号为(
+root:x:0:0:root:/root:/sbin/sh
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+
+[root@localhost ~]# cat txt3
+aaa b7bb CCC
+xxx y9yy ZZZ
+[root@localhost ~]# sed 's/.//2' txt3  //针对任意一行第二个字符替换为空格 也即是等同于删除
+aa b7bb CCC
+xx y9yy ZZZ
+[root@localhost ~]# sed 's/.$//' txt3   //针对任意一行最后一个字符删除
+aaa b7bb CC
+xxx y9yy ZZ
+[root@localhost ~]# sed 's/.//2;s/.$//' txt3 //上述两个合并在一起 利用替换功能删除每行的第2个字符和最后一个字符
+aa b7bb CC
+xx y9yy ZZ
+[root@localhost ~]# sed 's/[0-9]//g' txt3  //针对任意一行全部数字字符替换为空格(利用替换 删除所有数字)
+aaa bbb CCC
+xxx yyy ZZZ
+
+\(\) 保留  \1 \2 \3
+() 划分范围
+
+egrep "(bin:/){2}" txt  //找2个连续的bin:/
+[root@localhost ~]# cat txt4
+abc
+[root@localhost ~]# sed -r 's/(a)(b)(c)/\3\2\1/' txt4
+cba
+[root@localhost ~]# sed -r 's/^(.)(.*)(.)$/\3\2\1/' txt4 //将文本中第一个字符和最后一个字符互换
+cba
+[root@localhost ~]# cat txt3
+aaa b7bb CCC
+xxx y9yy ZZZ
+[root@localhost ~]# sed -r 's/^(.)(.*)(.)$/\3\2\1/' txt3  //将文本中第一个字符和最后一个字符互换
+Caa b7bb CCa
+Zxx y9yy ZZx
+
+[root@localhost ~]# sed -r 's/([A-Z])/\1/' txt3
+aaa b7bb CCC
+xxx y9yy ZZZ
+[root@localhost ~]# sed -r 's/([A-Z])/[\1]/' txt3//将大写字母替换为加括号的大写字母 没加g默认只加每行的第一个
+aaa b7bb [C]CC
+xxx y9yy [Z]ZZ
+[root@localhost ~]# sed -r 's/([A-Z])/[\1]/g' txt3//将全部大写字母替换为加上括号的大写字母
+aaa b7bb [C][C][C]
+xxx y9yy [Z][Z][Z]
+
+综合案例:
+编写脚本实现vsftpd服务装包配置启服务的全过程，开启上传功能
+
+  1 #!/bin/bash
+  2 yum -y install vsftpd &> /dev/dull
+  3 sed -i 's/^#anon_u/anon_u/' /etc/vsftpd/vsftpd.conf //使用sed来取消配置文件中某两行的注释
+  4 systemctl restart vsftpd
+  5 systemctl enable vsftpd
+  6 chmod o+w /var/ftp/pub   //赋予其他用户写权限
+测试时关闭防火墙和selinux
+
+
+-n         -r         -i
+p          d          s
+a行后追加  i行前添加  c替换行
+
+[root@localhost opt]# cat txt5
+AAA
+BBB
+CCC
+[root@localhost opt]# sed '1a 888' txt5 //第一行下面添加888
+AAA
+888
+BBB
+CCC
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost opt]# sed '1,2a 888' txt5 //第1到2行下添加888
+AAA
+888
+BBB
+888
+CCC
+[root@localhost opt]# sed '3i 888' txt5  //第3行上添加888
+AAA
+BBB
+888
+CCC
+[root@localhost opt]# sed '/A/a 888' txt5 //有A的行下添加888
+AAA
+888
+BBB
+CCC
+[root@localhost opt]# sed 'i 888' txt5   //每行上添加888
+888
+AAA
+888
+BBB
+888
+CCC
+[root@localhost opt]# sed '1c 888' txt5    //第一行替换为888
+888
+BBB
+CCC
+
+思考：如何使用sed和字符串处理判断yum仓库好坏（思路）?
+[root@localhost opt]# yum repolist | sed -n '$p'
+repolist: 15,782
+[root@localhost opt]# a=`yum repolist | sed -n '$p'`
+[root@localhost opt]#
+[root@localhost opt]# echo $a
+repolist: 15,782
+[root@localhost opt]# echo ${a#*}
+repolist: 15,782
+[root@localhost opt]# echo ${a#* }
+15,782
+[root@localhost opt]# echo ${a#* } | sed 's/,//'
+15782
+[root@localhost opt]# x=`echo ${a#* } | sed 's/,//'`
+[root@localhost opt]# echo $x
+15782
+[root@localhost opt]# [ $x -eq 0 ] && echo "yum不可用" && exit
+判断可用的话再继续装包配置启服务
+
+
+引入awk
+vim
+grep
+sed  非交互式编辑文本
+awk  搜索
+awk编程语言/数据处理引擎
+-基于模式匹配检查输入文本，逐行处理并输出
+-通常用在shell脚本中，获取指定的数据
+-单独用时，可对文本数据做统计
+
+在awk读取文件的过程中中，变量$0保存整行（全部文本）的内容，变量$1保存第1个域（即是第一列）的内容，$2保存第二个域（即是第二列）的内容，…
+
+awk的一般语法格式为：
+　　awk [-参数 变量] 'BEGIN{初始化}条件类型1{动作1}条件类型2{动作2}。。。。END{后处理}'
+其中：BEGIN和END中的语句分别在开始读取文件（in_file）之前和读取完文件之后发挥作用，可以理解为初始化和扫尾。
+
+awk参数说明：
+ -F re：允许awk更改其字段分隔符
+ -v var=$v 把v值赋值给var，如果有多个变量要赋值，那么就写多个-v，每个变量赋值对应一个-v
+　　　　e.g:要打印文件a的第num行到num+num1行之间的行， 
+　　　　　　awk -v num=num−vnum1=num1 'NR==num,NR==num+num1{print}' a 
+ -f progfile：允许awk调用并执行progfile程序文件，当然progfile必须是一个符合awk语法的程序文件。
+
+eg:
+[root@localhost opt]# awk '{print}' test.txt  //输出文档所有内容
+hello the world
+welcome to beijing
+[root@localhost opt]# awk '{print $1 $3}' test.txt  //输出文档每行的第1列 第3列
+helloworld
+welcomebeijing
+[root@localhost opt]# awk '{print $2}' test.txt   //输出文档每行的第2列
+the
+to
+[root@localhost opt]# head -1 /etc/passwd > txt2
+[root@localhost opt]# cat txt2
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk '{print}' txt2     //输出文档所有内容
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk '{print $5}' txt2    //不指定的情况下，默认的分隔符是空格 而文本无空格所以默认只有一列 所以要求打印第5列无输出
+
+[root@localhost opt]# awk '{print $1}' txt2     //文档有且仅有1列 打印输出第1列
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F: '{print $5}' txt2  //使用:做分割符，要求输出第5列
+root
+[root@localhost opt]# cat txt2
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F[:/] '{print $9}'  txt2  //使用:和/都作为分割符 要求输出第9列 
+bin
+
+awk内置变量：$1 $2 $3 …… NR表示行  NF表示列  $1表示第1列 $2表示第2列……类推
+eg:
+[root@localhost opt]# cat txt2
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F[:/] '{print NF}'  txt2        //输出列数
+10
+[root@localhost opt]# awk -F[:/] '{print NR}'  txt2        //输出行数
+1
+[root@localhost opt]# awk -F[:/] '{print NR NF}'  txt2     //同时输出行数和列数不加任何符号看不清
+110        
+[root@localhost opt]# awk -F[:/] '{print NR,NF}'  txt2     //同时输出行和列 加上逗号有空格效果
+1 10
+[root@localhost opt]# awk -F[:/] '{print NR" "NF}'  txt2   //或者把空格引起来
+1 10
+[root@localhost opt]# awk -F[:/] '{print "当前行有"NF"列"}'  txt2   //常量配合变量输出
+当前行有10列
+[root@localhost opt]# awk -F[:/] '{print "当前行有NF列"}'  txt2     //变量不能在双引号内，否则变成常量输出
+当前行有NF列
+eg1:
+[root@localhost opt]# ifconfig ens33
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.111.130  netmask 255.255.255.0  broadcast 192.168.111.255
+        inet6 fe80::20c:29ff:fe3d:e3e7  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:3d:e3:e7  txqueuelen 1000  (Ethernet)
+        RX packets 22192  bytes 13981376 (13.3 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 5883  bytes 891620 (870.7 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[root@localhost opt]# ifconfig ens33 | awk '/RX p/{print"当前网卡接受的流量是" $5"字节"}'  //RX p是为了找到RX packets这一行      
+当前网卡接受的流量是14002975字节
+[root@localhost opt]# ifconfig ens33 | awk '/TX p/{print"当前网卡发送的流量是" $5"字节"}'
+当前网卡发送的流量是913722字节
+eg2:
+[root@localhost opt]# df -h
+文件系统                 容量  已用  可用 已用% 挂载点
+devtmpfs                 898M  4.0K  898M    1% /dev
+tmpfs                    910M     0  910M    0% /dev/shm
+tmpfs                    910M  9.6M  901M    2% /run
+tmpfs                    910M     0  910M    0% /sys/fs/cgroup
+/dev/mapper/centos-root   17G   11G  7.0G   59% /
+/dev/sda1               1014M  154M  861M   16% /boot
+tmpfs                    182M     0  182M    0% /run/user/0
+[root@localhost opt]# df -h | awk '/sda1/{print"磁盘可用空间是"$4}'
+磁盘可用空间是861M
+
+eg3(查看安全日志信息 并展示所需要的信息内容):
+[root@localhost opt]# cat /var/log/secure
+May 23 21:47:19 localhost unix_chkpwd[31419]: password check failed for user (root)
+May 23 21:47:19 localhost sshd[31407]: pam_succeed_if(sshd:auth): requirement "uid >= 1000" not met by user "root"
+May 23 21:47:21 localhost sshd[31407]: Failed password for root from 192.168.111.1 port 51709 ssh2
+[root@localhost opt]# awk '/Failed/{print $11}'  /var/log/secure //在安全日志中查找访问本机失败的ip地址记录
+192.168.111.1
+192.168.111.1
+
+awk的处理时机：
+逐行任务
+awk [选项]  'BEGIN{指令} {指令} END{指令}'  文件
+
+eg(逐行任务):
+要求：格式化输出passwd文件内容时，要求第一行为列表标题，中间打印用户的名称、UID、家目录信息，最后一行提示一共处理已处理文本的总行数（显示格式如下）：
+User    UID     Home
+root    0       /root
+bin     1       /bin
+daemon  2       /sbin
+adm     3       /var/adm
+lp      4       /var/spool/lpd
+总计 5 行
+思路：
+根据思路使用awk逐行任务编写，验证awk过滤语句
+输出信息时，可以使用"\t"显示Tab制表位
+
+awk流程控制：
+BEGIN任务  执行1次
+逐行任务   执行多次，与文本有关
+END任务    执行1次
+解答：
+[root@localhost opt]# head -5 /etc/passwd > txt3
+[root@localhost opt]# cat txt3
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+
+[root@localhost opt]# awk 'BEGIN{print "User\tUID\tHome"}'
+User    UID     Home
+[root@localhost opt]# awk -F: '{print $1"\t"$3"\t"$6}' txt3     //’\t‘代表自动空格符
+root    0       /root
+bin     1       /bin
+daemon  2       /sbin
+adm     3       /var/adm
+lp      4       /var/spool/lpd
+
+[root@localhost opt]# awk -F: 'BEGIN{print "User\tUID\tHome"}{print $1"\t"$3"\t"$6}'   txt3
+User    UID     Home
+root    0       /root
+bin     1       /bin
+daemon  2       /sbin
+adm     3       /var/adm
+lp      4       /var/spool/lpd
+
+[root@localhost opt]# awk -F: 'BEGIN{print "User\tUID\tHome"}{print $1"\t"$3"\t"$6}END{print "总计",NR,"行"}'   txt3
+User    UID     Home
+root    0       /root
+bin     1       /bin
+daemon  2       /sbin
+adm     3       /var/adm
+lp      4       /var/spool/lpd
+总计 5 行
+
+awk处理条件
+
+1.(~:表示包含  !~:不包含)：
+[root@localhost opt]# awk -F: '$1~/root/' txt3  //输出第一列中包含root的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F: '$1~/roo/' txt3   //输出第一列中包含roo的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F: '$1!~/roo/' txt3   //输出第一列中不包含roo的行
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+
+[root@localhost opt]# awk -F: '$7!~/nologin$/{print $1,$7}' /etc/passwd   //除去第七列不包含以nologin结尾的 输出以第1列用户名 第7列解释器为格式的行
+root /bin/bash
+sync /bin/sync
+shutdown /sbin/shutdown
+halt /sbin/halt
+mysql /bin/false
+harry /bin/bash
+yg /bin/bash
+xln /bin/bash
+lisi /bin/bash
+xyz /bin/bash
+x /bin/bash
+aaa /bin/bash
+a /bin/bash
+q /bin/bash
+qqq /bin/bash
+eee /bin/bash
+h /bin/bash
+il /bin/bash
+w /bin/bash
+e /bin/bash
+r /bin/bash
+
+2.使用数字或者字符做条件 == != > < >= <=
+
+[root@localhost opt]# awk 'NR==5{print}' txt3    //输出第五行
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+[root@localhost opt]# awk -F: '$3==0' txt3       //输出第三列等于0的行
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F: '$1=="root"' txt3    //输出第一列等于root的行，加上引号可以正常输出 不加引号无效
+root:x:0:0:root:/root:/bin/bash
+[root@localhost opt]# awk -F: '$3>1000' /etc/passwd    //输出第三列大于1000的行
+nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+yg:x:1001:1001::/home/yg:/bin/bash
+xln:x:1002:1002::/home/xln:/bin/bash
+lisi:x:1003:1002::/home/lisi:/bin/bash
+xyz:x:1004:1004::/home/xyz:/bin/bash
+x:x:1005:1005::/home/x:/bin/bash
+aaa:x:1006:1006::/home/aaa:/bin/bash
+a:x:1007:1007::/home/a:/bin/bash
+q:x:1008:1008::/home/q:/bin/bash
+qqq:x:1009:1009::/home/qqq:/bin/bash
+eee:x:1010:1010::/home/eee:/bin/bash
+h:x:1011:1011::/home/h:/bin/bash
+il:x:1012:1012::/home/il:/bin/bash
+w:x:1013:1013::/home/w:/bin/bash
+e:x:1014:1014::/home/e:/bin/bash
+r:x:1015:1015::/home/r:/bin/bash
+
+3.使用逻辑符号  &&   ||
+[root@localhost opt]# awk -F: '$3<=10 && $3>1000' /etc/passwd
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost opt]# awk -F: '$3<=10 || $3>1000' /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+yg:x:1001:1001::/home/yg:/bin/bash
+xln:x:1002:1002::/home/xln:/bin/bash
+lisi:x:1003:1002::/home/lisi:/bin/bash
+xyz:x:1004:1004::/home/xyz:/bin/bash
+x:x:1005:1005::/home/x:/bin/bash
+aaa:x:1006:1006::/home/aaa:/bin/bash
+a:x:1007:1007::/home/a:/bin/bash
+q:x:1008:1008::/home/q:/bin/bash
+qqq:x:1009:1009::/home/qqq:/bin/bash
+eee:x:1010:1010::/home/eee:/bin/bash
+h:x:1011:1011::/home/h:/bin/bash
+il:x:1012:1012::/home/il:/bin/bash
+w:x:1013:1013::/home/w:/bin/bash
+e:x:1014:1014::/home/e:/bin/bash
+r:x:1015:1015::/home/r:/bin/bash
+[root@localhost opt]# awk 'NR>=2 && NR <=4' txt3
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+
+awk综合案例:
+本案例要求编写脚本，实现一下需求：
+-找到使用bash作登录shell的本地用户
+-列出这些用户的shadow密码记录
+步骤一：任务需求及思路分析
+编写脚本的任务要求如下:
+-分析出使用bash作登录shell的本地用户
+-列出这些用户的shadow密码记录
+-按每行“用户名--密码记录”保存结果
+步骤二：具体书写
+#使用awk按需求输出文档  用户名-->密码
+  1 #!/bin/bash
+  2 u=`awk -F: '/bash$/{print $1}' /etc/passwd`   //首先找到哪些用户使用的解释器是bash，找到这些用户后把名字赋予变量u
+  3 for i in $u  //把这些找到的用户名轮番交给for循环处理
+  4 do
+  5   grep $i /etc/shadow | awk -F: '{print $1" -->"$2}'//例如第一循环到的账户是root，那么grep root可以找到shadow文档中
+  对应的行，包含用户和密码，再使用awk筛选输出第1列用户名-->第2列密码
+  6 done
+步骤三：测试结果（截取部分）
+root -->$6$vGlPAHnGKhGxAx5J$Xy3VQt3qU6sO.kg38bfL5S02GIarkeebRusZfkpD9RplgC1JzxDLUuhlkKtofBOQqVL8iBTCg1vI4YTnda80n1
+harry -->!!
+yg -->!!
+xln -->!!
+lisi -->$6$PnI1ODof$gOvN6tZGzZa.istHW6BL62h0hy57Vr8YPVj85gpahx.CkhjCQ5y6sf.KDbuzmmT.G7guB4CGbJoiegBzguTA6/
+xyz -->!!
+
+
+awk控制
+awk数组：
+数组可以使用一个数组名称存储多个值
+
+数组名[下标1]=值1
+数组名[下标2]=值2
+数组名[下标3]=值3
+eg:
+[root@localhost opt]# cat tst1
+192.168.0.1
+192.168.0.1
+192.168.0.2
+192.168.0.3
+192.168.0.1
+192.168.0.2
+192.168.0.1
+[root@localhost opt]# awk '{a[$1]++}END{for(i in a){print i,a[i]}}'  tst1  //$1代表第一列 本文件也只有一列
+192.168.0.1 4
+192.168.0.2 2
+192.168.0.3 1
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost opt]# awk '{a[1]++}END{for(i in a){print i,a[i]}}'  tst1  //数组里是常量 而文档有7行 所以常量a[1]在每一行加上1最后等于7
+1 7
+[root@localhost opt]# awk '{a[2]++}END{for(i in a){print i,a[i]}}'  tst1
+2 7
+
+
+eg2:(查看系统的访问日志)
+   准备测试环境：
+   yum -y install httpd                  //安装服务
+   netstat -ntulp | grep :80             //检查哪个服务占用了80端口
+   /usr/local/nginx/sbin/nginx -s stop   //如果是nginx需要关闭
+   systemctl start httpd.service         //开启服务
+   netstat -ntulp | grep :80
+   echo 123 > /var/www/html/index.html   //创建httpd的默认页面
+   curl http://192.168.111.130           //测试
+   结果： 123
+   cat /var/log/httpd/access_log         //httpd的日志，每次被访问都会添加新记录
+   yum -y install httpd.tools            //ab工具包安装
+   ab -c 1 -n 1000 http://192.168.111.130/index.html //使用ab测试网站访问量，-c是用户数量，-n是访问次数
+   awk '{ip[$1]++}END{for(i in ip){print i,ip[i]}}' /var/log/httpd/access_log  //使用awk可以统计日志的访问量
+   结果：
+      192.168.111.130 1002
+      192.168.111.1 5
+[root@localhost opt]# awk '{ip[$1]++}END{for(i in ip){print ip[i],i}}' /var/log/httpd/access_log | sort -nr  //用sort按大到小排个序
+1002 192.168.111.130
+5 192.168.111.1
+
+eg(综合案例):
+编写监控脚本，如果查到有人访问本机密码输错三次则发邮件通知管理员
+  1 #!/bin/bash
+  2 x=`awk '/Failed/{ip[$11]++}END{for(i in ip){print i","ip[i]}}' /var/log/secure`
+  3 for i in $x
+  4 do
+  5    p=${i%,*}
+  6    s=${i#*,}
+  7    [ $s -gt 3 ] && echo "报警！ $p访问本机失败了$s次，赶紧处理" | mail -s test root
+  8 done
+  
+结果：
+From root@server0.example.com  Thu May 25 00:03:56 2023
+Return-Path: <root@server0.example.com>
+X-Original-To: root
+Delivered-To: root@server0.example.com
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 065291326023; Thu, 25 May 2023 00:03:56 +0800 (CST)
+Date: Thu, 25 May 2023 00:03:56 +0800
+To: root@server0.example.com
+Subject: test
+User-Agent: Heirloom mailx 12.5 7/5/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230524160356.065291326023@localhost.localdomain>
+From: root@server0.example.com (root)
+
+报警！ 192.168.111.1访问本机失败了8次，赶紧处理
+
+
+
+服务器运维：https://blog.csdn.net/BraveZhouzhou/article/details/125913797
+eg1(nginx用户认证实验 不想让任何人都能访问该页面)：
+httpd做一个网站涉及的配置文件和nginx配置文件的区别
+httpd
+<virtualhost *:80>
+servername www.example.com
+documentroot /var/www/html  //绝对路径
+</virtualhost>
+nginx（/usr/local/nginx）
+server{
+     listen 80;
+	 server_name localhost;
+	 root html;   //相对于nginx安装路径的相对路径
+}
+步骤一：修改nginx配置文件（加上40行和41行）
+[root@localhost sbin]# vim /usr/local/nginx/conf/nginx.conf
+ 37     server {
+ 38         listen       80;
+ 39         server_name  192.168.111.130;     //使用ip
+ 40         auth_basic "input user and pass:";
+ 41         auth_basic_user_file "/usr/local/nginx/pass";    //默认没有这个密码文件 所以需要自己创建
+ 42         #charset koi8-r;
+ 43
+ 44         #access_log  logs/host.access.log  main;
+步骤二：生成密码文件，创建用户及密码
+使用htpasswd命令创建账户文件，需要确保系统中已经安装了httpd-tools。
+[root@localhost conf]# yum -y install http-tools
+[root@localhost conf]# htpasswd -c /usr/local/nginx/pass jerry  //创建帮助密码文件
+New password:
+Re-type new password:
+Adding password for user jerry
+[root@localhost conf]# cat /usr/local/nginx/pass  //查看可以发现密码文件已经创建成功
+jerry:$apr1$jeygg9wz$Mhk571yxCYlUWvsXAQrOP1
+[root@localhost conf]# htpasswd  /usr/local/nginx/pass tom    //追加用户不使用-C参数
+New password:
+Re-type new password:
+Adding password for user tom
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost conf]# cat /usr/local/nginx/pass    //查看密码文件 发现jerry 和 tom都在
+jerry:$apr1$jeygg9wz$Mhk571yxCYlUWvsXAQrOP1
+tom:$apr1$nTzTncDt$V57Y.tNmpxAyjHULZiQ/Z.
+[root@localhost sbin]# ./nginx -s reload
+[root@localhost sbin]# systemctl start firewalld.service
+最后一步：去浏览器访问http://192.168.111.130 会出现认证界面 输入用户名和密码即可认证成功
+
+eg2(Nginx域名虚拟主机  apache和nginx都可以做虚拟主机实验):
+参考文章：https://www.likecs.com/show-910650.html
+沿用上述练习 配置基于域名的虚拟主机，实现以下目标:
+ 1.实现两个基于域名的虚拟主机，域名分别为www.a.com和www.b.com
+ 2.对域名为www.a.com的站点进行用户认证，用户名称为tom，密码为123456
+ 
+方案：修改Nginx配置文件，添加server容器实现虚拟主机功能；对于需要进行用户认证的虚拟主机添加auth认证语句。
+      虚拟主机一般可以分为：基于域名、基于IP和基于端口的虚拟主机。
+
+步骤：
+步骤一（1）：修改nginx服务配置，添加相关虚拟主机配置如下：
+ 37     server {
+ 38         listen       80;
+ 39         server_name  www.a.com;     //使用域名
+ 40         auth_basic "input user and pass:";
+ 41         auth_basic_user_file "/usr/local/nginx/pass";   //默认没有这个文件 所以需要自己创建 但上面哪个实验已经创建过 所以无需重复创建
+ 42         #charset koi8-r;
+ 43
+ 44         #access_log  logs/host.access.log  main;
+ 45         location / {
+ 46         #proxy_pass http://myserver;
+ 47            root   html;    //指定网站根路径  使用的就是默认路径/usr/local/nginx/
+ 48            index  index.html index.htm;  //index.html是默认首页页面 实际上在这写谁谁就是首页页面  index.html找不到的话就找index.htm页面
+ 49        }
+
+
+ 87     server {
+ 88         listen       80;
+ 89         server_name  www.b.com;
+ 90         location / {
+ 91             root   www;   //指定网站根路径也即是网站的网页在什么目录下 www这个路径是没有的 所以需要新建 
+ 92             index  index.html index.htm;
+ 93         }
+ 94     }
+
+      （2）：创建网站根目录及对应首页文件
+[root@localhost ~]# mkdir /usr/local/nginx/www    //新建网站首页路径
+[root@localhost ~]# echo "www" > /usr/local/nginx/www/index.html   //新建一个用于域名b访问的网站首页
+      （3）：重新加载配置
+[root@localhost ~]# /usr/local/nginx/sbin/nginx -s reload
+步骤二：客户端测试
+1）修改客户端主机192.168.111.130的/etc/hosts文件，进行域名解析
+[root@localhost ~]# vim /etc/hosts      //谁是客户端谁就来修改这个文件
+4 192.168.111.130 www.a.com www.b.com
+2）登录192.168.111.130客户端主机进行测试
+注意：请先关闭真实机的firefox 再 SSH -X远程连接调用虚拟机的firefox
+[root@localhost ~]# firefox http://www.a.com   //输入密码后访问
+[root@localhost ~]# firefox http://www.b.com   //直接访问
+
+eg:nginx动静分离：https://www.jb51.net/article/243665.htm
+
+eg3(SSL虚拟主机)：
+问题：沿用上述联系，配置基于加密网站的虚拟主机，实现以下目标：
+1.域名为www.c.com
+2.该站点通过https访问
+3.通过私钥，证书对该站点所有数据加密
+方案：源码安装Ngnix时必须使用--with-http_ssl_module参数，启用加密模块，对于需要进行SSL加密处理的站点添加ssl相关指令(设置网站
+需要的私钥和证书)
+步骤：
+https://www.likecs.com/show-203276049.html
+
+
+
+Nginx四层代理:https://blog.csdn.net/weixin_45467975/article/details/128900195
+https://blog.csdn.net/weixin_46902396/article/details/124322638
+https://www.rootop.org/pages/4523.html
+ https://www.lmlphp.com/user/16553/article/item/502140/  
+ 
+nginx四层代理拓扑图：
+                                                                             |--->后端服务器eth1:192.168.2.100
+                                                                             |
+eth0(192.168.4.10)-------nginx代理（eth0:192.168.4.5 eth1:192.168.2.5）------|
+                                                                             |
+                                                                             |--->后端服务器eth1:192.168.2.200//开启--with-stream模块后 后端服务器可以是任何服务（ssh http等）
+
+要点：nginx不仅可以代理httpd服务 也可以代理其他服务如sshd ftpd等服务 但是会有一定的条件 比如代理sshd服务就需要加上ngx_stream_core_module模块也即是开启--with-stream模块  并且nginx的版本要在1.9以上  
+开启了--with-stream模块就意味着nginx可以做四层代理 事实上开启了此模块以后就意味着nginx可以做所有种类客户端的代理服务 7层【http ftp dhcp dns smtp pop】4层【tcp udp】
+为了可以代理一切服务，所以进行如下操作：
+eg(nginx代理后端ssh服务器案例):
+步骤一：卸载原有nginx，重新安装nginx并配置添加 --with-stream模块
+步骤二：配置nginx服务器，添加服务器池，实现Tcp/UDP反向代理功能
+1）修改/usr/local/nginx/conf/nginx.conf配置文件
+注意由于本次实验不是代理http服务 所以stream模块要写在http模块的外面
+stream{
+upstream backend{
+server 192.168.2.100:22; //后端SSH服务器 这里的端口号也可以改成(3306:连接的就是mysql服务）（53：dns服务）等等
+server 192.168.2.200:22;
+
+}   
+server{
+listen 12345;  //nginx监听的端口 这里写12345而不是22端口是因为 用户要连接的是nginx代理服务器 然后再转发给后端ssh服务器 所以12345相当于是nginx的端口（22以及80端口都已经被其他服务占用）
+proxy_pass backend;
+}
+}
+步骤三：访问：ssh 192.168.4.5(代理nginx服务器IP) -p 12345 //用12345端口访问用于连接nginx代理服务器 Nginx接收到请求后会将请求转发到另外两台服务器
+        访问：ssh 192.168.4.5              //不指定端口号就默认是22号端口  默认连接的是ssh服务
+		
+端口号唯一对应服务（所以实验也可以后端代理多种服务器 只需要对应好端口即可 代理哪个服务仅仅取决于端口）：
+客户端访问22端口一定连接的是ssh
+而访问12345一定连接的是nginx
+
+nginx状态模块：https://www.cnblogs.com/1naonao/p/11364506.html
+如何查看服务器状态信息（非常重要的功能）
+1）编译安装nginx时使用--with-http_stub_status_module开启状态页面模块
+重装nginx
+#nginx -s stop
+#rm -rf /usr/local/nginx
+#cd /usr/local/nginx-1.18.0
+#./configure \
+> --with-http_ssl_module \
+> --with-stream \
+> --with-http_stub_status_module
+#make&&make install
+修改配置文件：
+#cat /usr/local/nginx/conf/nginx.conf
+……
+随便找个位置写入以下配置文件就行：
+location /status{
+stub_status on;
+#allow IP地址;
+#deny IP地址;
+}
+……
+重新启动：
+#nginx
+
+tomcat安装并启动：https://blog.csdn.net/m0_67062351/article/details/125252870
+预备工作：
+安装tomcat前要先安装jdk。
+[root@localhost ~]# yum -y install java-1.8.0-openjdk
+[root@localhost ~]# yum -y install java-1.8.0-openjdk-headless
+一、TOMCAT
+1、下载安装tomcat（http://tomcat.apache.org/）我这边是下载的apache-tomcat-8.5.88.tar.gz
+2、解压
+tar -zxvf apache-tomcat-8.5.88.tar.gz
+我是放在了usr/local/tomcat下所以要创建tomcat文件夹并将解压文件移动到tomcat下(由于之前新建过再次创建或出现重复)
+mkdir /usr/local/tomcat
+mv apache-tomcat-8.5.88 /usr/local/tomcat/
+3、进入tomcat安装bin目录并启动
+cd usr/local/tomcat/apache-tomcat-8.5.88/bin/
+./startup.sh
+4、关闭防火墙：
+成功启动后浏览器输入http://192.168.111.130:8080/查看信息
+
+案例1（部署tomcat):
+1）创建测试jsp测试页面
+[root@localhost ROOT]# vim test.jsp
+  1 <html>
+  2 <body>
+  3 <center>
+  4 Now time is: <%=new java.util.Date()%>
+  5 </center>
+  6 </body>
+  7 </html>
+2）重启服务
+这一步可以省略
+3）访问测试：
+http://192.168.111.130:8080/test.jsp 即可查看到访问结果
+案例2(使用tomcat部署虚拟主机)
+要求如下：
+实现两个基于域名的虚拟主机，域名分别为：www.a.com和www.b.com
+使用www.a.com域名访问的页面根路径为/usr/local/tomcat/apache-tomcat-8.5.88/a/ROOT
+使用www.b.com域名访问的页面根路径为/usr/local/tomcat/apache-tomcat-8.5.88/b/base
+访问www.a.com/test时，页面自动跳转到/var/www/html目录下的页面
+访问页面时支持SSL加密通讯
+私钥，证书存储路径为/usr/local/tomcat/apache-tomcat-8.5.88/conf/cert
+每个虚拟主机都拥有独立的访问日志文件
+配置tomcat集群环境
+eg1:
+操作步骤如下：
+步骤一：配置服务器虚拟主机
+1）服务器端修改server.xml;配置文件，创建虚拟主机
+[root@localhost apache-tomcat-8.5.88]#  vim /usr/local/tomcat/apache-tomcat-8.5.88/conf/server.xml   
+161       <Host name="www.a.com"  appBase="a"     //appBase就意味着当前路径是a  实际上也就意味着 该域名访问的网站目录是/usr/local/tomcat/apache-tomcat-8.5.88/a/ROOT/index.html  其实
+162             unpackWARs="true" autoDeploy="true">
+          <Context path="" docBase="Base"/>    //docBase的默认值是ROOT若配置文件里没有出现docBase这个字段则访问目录应该是当前目录拼接上/a/再拼接上docBase后面的值  若出现将ROOT改成对应值即可  docBase的值若改动则访问目录路径也随之改变即可
+163       </Host>
+164       <Host name="www.b.com"  appBase="b"
+165             unpackWARs="true" autoDeploy="true">
+          <Context path="" docBase="ROOT"/>
+166       </Host>
+167       <Host name="localhost"  appBase="webapps"
+168             unpackWARs="true" autoDeploy="true">
+          <Context path="" docBase="ROOT"/>
+2）服务器端创建虚拟主机对应的页面根路径
+[root@localhost apache-tomcat-8.5.88]# mkdir -p /usr/local/tomcat/apache-tomcat-8.5.88/{a,b}/ROOT
+[root@localhost apache-tomcat-8.5.88]# echo AAA > /usr/local/tomcat/apache-tomcat-8.5.88/a/ROOT/index.html
+[root@localhost apache-tomcat-8.5.88]# echo BBB > /usr/local/tomcat/apache-tomcat-8.5.88/b/ROOT/index.html
+3）服务器端重启Tomcat服务器
+[root@localhost apache-tomcat-8.5.88]# /usr/local/tomcat/apache-tomcat-8.5.88/bin/shutdown.sh
+Using CATALINA_BASE:   /usr/local/tomcat/apache-tomcat-8.5.88
+Using CATALINA_HOME:   /usr/local/tomcat/apache-tomcat-8.5.88
+Using CATALINA_TMPDIR: /usr/local/tomcat/apache-tomcat-8.5.88/temp
+Using JRE_HOME:        /usr/local/jdk1.8.0_171
+Using CLASSPATH:       /usr/local/tomcat/apache-tomcat-8.5.88/bin/bootstrap.jar:/usr/local/tomcat/apache-tomcat-8.5.88/bin/tomcat-juli.jar
+Using CATALINA_OPTS:
+[root@localhost apache-tomcat-8.5.88]# /usr/local/tomcat/apache-tomcat-8.5.88/bin/startup.sh
+Using CATALINA_BASE:   /usr/local/tomcat/apache-tomcat-8.5.88
+Using CATALINA_HOME:   /usr/local/tomcat/apache-tomcat-8.5.88
+Using CATALINA_TMPDIR: /usr/local/tomcat/apache-tomcat-8.5.88/temp
+Using JRE_HOME:        /usr/local/jdk1.8.0_171
+Using CLASSPATH:       /usr/local/tomcat/apache-tomcat-8.5.88/bin/bootstrap.jar:/usr/local/tomcat/apache-tomcat-8.5.88/bin/tomcat-juli.jar
+Using CATALINA_OPTS:
+Tomcat started.
+4）客户端设置host文件，并浏览测试页面进行测试(proxy充当客户端角色)
+注意：ssh远程连接时使用-X参数才可以
+使用客户端来修改配置文件：
+[root@localhost ~]# vim /etc/hosts
+4 192.168.111.130  www.a.com www.a.com www.b.com
+5）客户端访问：
+[root@localhost ~]# curl www.a.com:8080
+AAA
+[root@localhost ~]# curl www.b.com:8080
+BBB
+
+tomcat端口和虚拟主机不绑定
+/usr/local/tomcat/apache-tomcat-8.5.88/webapps
+
+
+eg2:访问www.a.com/test时，页面自动跳转到/var/www/html目录下的页面
+]#vim /usr/local/tomcat/apache-tomcat-8/conf/server.xml可知：
+    ……
+	<Host name>="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+    <Context path="/test" docBase="/var/www/html"/>   //这里其实就跟nginx反向代理实验一个道理 访问www.a.com/test时，页面自动跳转到/var/www/html目录下的页面
+    </Host>
+	
+eg3:tomcat加密虚拟主机 步骤：
+1 keytools生成密钥 
+2 修改密钥配置文件 将生成的密钥输入
+3 重启服务 访问
+
+
+
+session和cookie:
+client------------------server[登录]
+请求登录(user,passwd)-->服务器将登录状态写入一个文件中：这个文件就叫做session(用于保存用户登陆状态)
+                        00101.txt[tom,logined:true]
+  <---------------------返回页面(拆掉包头信息同时加上一个头部叫做cookie:00101)所以是server端返回了一个cookie给浏览器 然后浏览器保存了这个cookie(00101.txt)
+刷新F5------------------>00101.txt
+cookie保存在client端 保存的仅仅是个之前server端返回过来的那个文件名而已 
+cookie用于再次访问时 告诉server端自己曾经来过 并给server一个东西cookie,这个cookie就是个文件名 cookie记录客户端的登录信息保存在server端00101这个文件中 服务端找到以后验证确实来过 那么这次就无需再登录
+（当然如果cookie或session任意一个被删掉了 那么就还是需要再次登录）
+
+session:存储在服务器端，保存用户名，登陆状态等信息
+cookies:由服务器下发给客户端，保存在客户端的一个文件里 保存的内容主要包括：SessionID
+memchached是高性能的分布式缓存（内存）服务器 它是将数据存放在内存里的所以速度相当快但是当系统重启时 里面的数据会全部丢失 而这些特性正好可以用来存储session（登陆状态）
+-用来几种缓存数据库查询结果，减少数据库访问次数，以提高动态Web应用的响应速度 （它可以实现共享session从而使得高可用集群都可以保存登录信息 避免次次都要重新登陆的麻烦）
+
+
+NFS（https://blog.51cto.com/u_15380854/4736511）：
+  a、NFS是一种基于TCP/IP传输的网络文件系统协议。通过使用NFS协议，客户机可以像访问本地目录一样访问远程服务器中的共享资源。对于大多数负载均衡群来说，使用NFS协议来共享数据存储是比较常见的做法，NFS也是存储设备必然支持的一种协议。但是由于NFS没有用户认证机制，且数据在网络上的明文传输，所以安全性很差，一般只在局域网中使用
+
+  b、NFS服务的实现依赖于RPC机制，已完成远程到本地的映射过程。所以需要安装nfs-utils、rpcbind软件包来提供NFS共享服务，前者用于NFS共享发布和访问，后者用于RPC的支持
+----------------------------------- 
+NFS的配置文件
+配置文件位置：/etc/exports
+vim /etc/exports
+格式为：共享目录位置 客户机地址 （权限选择）
+
+NFS使用的是随机端口，每次启动NFS都需要将自己的随机端口注册到rpcbind服务，这样客户端访问NFS时先到rpcbind查询端口信息，得到端口信息后再访问NFS服务。
+
+
+
+
+
+
+git:(版本控制软件 )
+支持断网操作
+
+部署git
+一：服务器端部署git
+1）安装并查看版本：
+[root@localhost ~]# yum -y install git
+[root@localhost ~]# git --version
+2）初始化一个空仓库
+[root@localhost ~]# mkdir /var/git
+[root@localhost ~]# git init /var/git/project --bare
+初始化空的 Git 版本库于 /var/git/project/
+[root@localhost ~]# ls /var/git/project
+branches  config  description  HEAD  hooks  info  objects  refs
+二：客户端测试
+1）clone克隆服务器仓库到本地
+[root@localhost ~]# yum -y install git
+[root@localhost ~]# git clone root@192.168.111.130:/var/git/project
+正克隆到 'project'...
+root@192.168.111.130's password:
+warning: 您似乎克隆了一个空版本库。
+您在 /var/spool/mail/root 中有新邮件
+[root@localhost ~]# cd project
+[root@localhost project]# ls -a
+.  ..  .git
+2）修改git配置
+[root@localhost project]# git config --global user.email "3035531450@qq.com"
+[root@localhost project]# git config --global user.name "xls"
+[root@localhost project]# cat ~/.gitconfig
+[user]
+        name = xls
+        email = 3035531450@qq.com
+[color]
+        ui = true
+3）本地工作区对数据进行增删改查（必须要先进入仓库再操作数据）。
+[root@localhost project]# echo "init date" > init.txt
+[root@localhost project]# mkdir demo
+[root@localhost project]# cp /etc/hosts demo
+4）查看仓库中数据的状态
+[root@localhost project]# git status
+# 位于分支 master
+#
+# 初始提交
+#
+# 未跟踪的文件:
+#   （使用 "git add <file>..." 以包含要提交的内容）
+#
+#       demo/
+#       init.txt
+提交为空，但是存在尚未跟踪的文件（使用 "git add" 建立跟踪）
+5）将工作区的修改提交到暂存区
+[root@localhost project]# git add .
+没有指定文件，也没有文件被添加。
+也许您想要执行 'git add .'？
+6）将暂存区修改提交到本地仓库
+[root@localhost project]# git add .
+[root@localhost project]# git commit -m "abc"
+[master（根提交） 68a963b] abc
+ 2 files changed, 6 insertions(+)
+ create mode 100644 demo/hosts
+ create mode 100644 init.txt
+[root@localhost project]# git status
+# 位于分支 master
+无文件要提交，干净的工作区
+7)将本地仓库中的数据推送到远程服务器（web2将数据推送到web1）
+[root@localhost project]#  git config --global push.default simple
+[root@localhost project]# git push
+root@192.168.111.130's password:
+Counting objects: 5, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 418 bytes | 0 bytes/s, done.
+Total 5 (delta 0), reused 0 (delta 0)
+To root@192.168.111.130:/var/git/project
+ * [new branch]      master -> master
+8）将服务器上的数据更新到本地(web1的数据更新到web2）：
+备注：可能其他人也在修改数据并提交服务器，就会导致自己的本地数据为旧数据，使用pull就可以将服务器上新的数据更新到本地
+[root@localhost project]# git pull
+root@192.168.111.130's password:
+Already up-to-date.
+9）查看版本日志
+[root@localhost project]# git log
+commit 68a963bc0e78f034572d93343b23a8b7212800c8
+Author: xls <3035531450@qq.com>
+Date:   Mon May 29 11:20:52 2023 +0800
+
+    abc
+[root@localhost project]# git log --pretty=oneline
+68a963bc0e78f034572d93343b23a8b7212800c8 abc
+[root@localhost project]# git log --oneline
+68a963b abc
+[root@localhost project]# git reflog
+68a963b HEAD@{0}: commit (initial): abc
+
+git分支操作：
+https://blog.csdn.net/weixin_44302046/article/details/123922309
+
+
+一：创建SSH协议服务器（支持读写操作）
+1）创建基于密码验证的SSH协议服务器（web1主机操作）
+[root@localhost project]# git init --bare /var/git/base_ssh
+初始化空的 Git 版本库于 /var/git/base_ssh/
+2）客户端访问的方式（web2主机操作）
+[root@localhost project]# git clone root@192.168.111.130:/var/git/base_ssh
+正克隆到 'base_ssh'...
+root@192.168.111.130's password:
+warning: 您似乎克隆了一个空版本库。
+[root@localhost project]# rm -rf base_ssh
+3)客户端生成SSH密钥，实现免密码登录git服务器（web2主机操作）
+[root@localhost ~]# ssh-keygen -f /root/.ssh/id_rsa -N ''
+[root@localhost ~]# ssh-copy-id  192.168.111.130(密码为：root)
+[root@localhost ~]# rm -rf project/
+[root@localhost ~]# git clone root@192.168.111.130:/var/git/project
+正克隆到 'project'...
+remote: Counting objects: 17, done.
+remote: Compressing objects: 100% (11/11), done.
+remote: Total 17 (delta 4), reused 0 (delta 0)
+接收对象中: 100% (17/17), done.
+处理 delta 中: 100% (4/4), done.
+[root@localhost ~]# cd project/
+[root@localhost project]# git push  //发现已经无需输入密码
+Everything up-to-date
+
+
+
+
+
+二：Git协议服务器（只读操作的服务器）
+1）安装git-daemon软件包（web1主机操作）
+[root@localhost ~]# yum -y install git-daemon
+2）创建版本库（web1主机操作）
+[root@localhost ~]# git init --bare /var/git/base_git
+3）修改配置文件，启动git服务（web1主机操作）
+[root@localhost ~]# vim /usr/lib/systemd/system/git@.service
+   --base-path=/var/lib/git
+   改为
+   --base-path=/var/git
+[root@localhost ~]# systemctl start git.socket
+4)客户端访问方式（web2主机操作）
+[root@localhost ~]# rm -rf project/
+[root@localhost ~]# git clone git://192.168.111.130/project
+
+
+
+三：HTTP协议服务器（只读操作的服务器）
+1）安装gitweb、httpd软件包（web1主机操作）
+[root@localhost ~]# yum -y install httpd gitweb
+2）修改配置文件，设置仓库根目录（web1主机操作）
+[root@localhost ~]# vim +11 /etc/gitweb.conf
+$projectroot="/var/git";    #添加一行
+3）新建版本仓库（web1主机操作）
+[root@localhost ~]# git init --bare /var/git/base_http
+4）启动httpd服务器
+[root@localhost ~]# systemctl start httpd  //先查看80端口是否被占用 若被占用先关掉再开启服务
+5）客户端访问方式（web2主机操作）
+注意：调用虚拟机中的firefox浏览器，需要在远程时使用ssh-X服务器IP，并且确保真是主机的firefox已经关闭
+#firefox http://192.168.111.130/git/
+
+
+以上三个方式的区别
+Git和ssh客户端都需要软件才能看到仓库但是http方式不需要任何软件用浏览器就能看到仓库
+
+
+
+
+rpm:
+把源码转换为rpm
+yum安装的版本一般比较早
+rpm不能定制 安装要找依赖比较麻烦
+
+制作nginx的RPM包
+本案例使用nginx-1.12.2版本的源码软件，生成对应的RPM包软件，具体要求如下：
+软件名称为nginx
+软件版本为1.12.2
+RPM软件包可以查询描述信息
+RPM软件包可以安装及卸载
+方案：
+ 安装rpm-build软件包，编写SPEC配置文件，创建新的RPM软件包
+要想把源码编程rpm需要一个工具：rpm-build
+
+把源码转换为rpm例子:
+tar -xf nginx -1.12.2.tar.gz
+cd nginx -1.12.2
+./cofigure
+make && make install
+nginx安装到哪里去了？/user/local/nginx
+tar -czf nginx.rpm  /user/local/nginx
+rpm -ivh nginx.rpm //rpm安装
+
+
+所以具体实现步骤如下：
+步骤一：安装rpm-build软件
+1）安装rpm-build软件包
+[root@localhost ~]# yum -y install rpm-build
+2）生成rpmbuild目录结构
+[root@localhost ~]# rpmbuild -ba nginx.spec
+错误：stat /root/nginx.spec 失败：没有那个文件或目录
+[root@localhost ~]# ls /root/rpmbuild
+BUILD  BUILDROOT  RPMS  SOURCES  SPECS  SRPMS
+3）准备工作，将源码软件复制到SOURCES目录
+[root@localhost ~]# cp nginx-1.18.0.tar.gz /root/rpmbuild/SOURCES/
+4）创建并修改SPEC配置文件
+[root@localhost ~]# cd rpmbuild/
+[root@localhost rpmbuild]# ls
+BUILD  BUILDROOT  RPMS  SOURCES  SPECS  SRPMS
+[root@localhost rpmbuild]# cd SPECS/
+[root@localhost SPECS]# ls
+[root@localhost SPECS]# vim nginx.spec
+ 1 Name:nginx
+  2 Version:1.18.0
+  3 Release:        1%{?dist}
+  4 Summary:This is a web server.
+  5 #Group:
+  6 License:GPL
+  7 URL:www.douniwan.com
+  8 Source0:nginx-1.18.0.tar.gz
+  9 #BuildRequires:
+ 10 #Requires:
+ 11 %description
+ 12 This is a web server toooooooooooooooo.
+ 13 %post
+ 14 useradd -s /sbin/nologin abc
+ 15 echo abc > /tmp/abc.txt
+ 16 %prep
+ 17 %setup -q
+ 18 %build
+ 19 ./configure --user=abc
+ 20 make %{?_smp_mflags}
+ 21 %install
+ 22 make install DESTDIR=%{buildroot}
+ 23 %files
+ 24 %doc
+ 25 %changelog
+ 26 /usr/local/nginx/*
+[root@localhost rpmbuild]# ls
+BUILD  BUILDROOT  RPMS  SOURCES  SPECS  SRPMS
+[root@localhost rpmbuild]# ls SPECS/
+nginx.spec
+[root@localhost rpmbuild]# ls SOURCES/
+nginx-1.18.0.tar.gz
+步骤二：使用配置文件创建RPM包
+1）安装依赖软件包
+[root@localhost nginx]# yum -y install gcc pcre-devel openssl-devel
+2）rpmbuild创建RPM软件包
+[root@localhost rpmbuild]# rpmbuild -ba /root/rpmbuild/SPECS/nginx.spec
+[root@localhost RPMS]# ls
+x86_64
+[root@localhost RPMS]# cd x86_64/
+[root@localhost x86_64]# ls
+nginx-1.18.0-1.el7.x86_64.rpm  nginx-debuginfo-1.18.0-1.el7.x86_64.rpm
+[root@localhost x86_64]#cd /usr/local/
+[root@localhost local]#ls
+[root@localhost local]#rm -rf nginx/
+[root@localhost nginx]# cd /root/rpmbuild
+[root@localhost rpmbuild]# cd RPMS
+[root@localhost RPMS]#  cd x86_64/
+[root@localhost x86_64]# ls
+nginx-1.18.0-1.el7.x86_64.rpm  nginx-debuginfo-1.18.0-1.el7.x86_64.rpm
+3）使用rpm包安装nginx:
+[root@localhost x86_64]# pwd
+/root/rpmbuild/RPMS/x86_64
+[root@localhost x86_64]# yum -y install nginx-1.18.0-1.el7.x86_64.rpm
+4）查看是否安装成功：
+[root@localhost x86_64]# cd /usr/local/
+[root@localhost local]# ls
+apache-tomcat-8.5.88.tar.gz  games         lib      mycat         ninix  src
+bin                          include       lib64    nginx         sbin   tomcat
+etc                          jdk1.8.0_171  libexec  nginx-1.18.0  share
+[root@localhost local]# id abc
+uid=1016(abc) gid=1016(abc) 组=1016(abc)
+[root@localhost local]# ls /tmp/abc.txt
+/tmp/abc.txt
+[root@localhost local]# cat /tmp/abc.txt
+abc
+
+
+
+
+
+lvs
+director server:调度服务器：将负载分发到real server的服务器
+real server:真实服务器：真正提供应用服务的服务器
+VIP：虚拟IP地址：公布给用户访问的虚拟IP地址
+RIP：真实IP地址:集群节点上使用的IP地址
+DIP：调度器连接节点服务器的IP地址
+
+lvs和Nginx原理完全不同 但是做出来的效果是相同的 lvs功能少性能高 nginx相反
+lvs的原理是路由器(数据包转发)【它与路由器的区别在于lvs的后台转发是不固定的 随机分发给不同的后台服务器】  lvs转发来自于客户端的数据包 但是它并不帮助客户端上网 相当于上网的其实还是客户端自己
+nginx的原理是代理（帮你干活）  nginx接收到来自于客户端的数据包的话 它会帮助客户端去上网 然后再将上网结果返回给客户端 相当于上网的其实是nginx代理服务器
+
+
+
+lvs实验案例一：（ipvsadm命令用法）
+步骤一：使用增删改lvs集群规则
+1）创建lvs虚拟集群服务器（算法为加权轮询：wrr）
+[root@www conf]# yum -y install ipvsadm
+[root@www conf]# ipvsadm -A -t 192.168.111.130:80 -s wrr
+[root@www conf]# ipvsadm -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.111.130:80 wrr
+2）为集群添加若干real server
+[root@www ~]# ipvsadm -a -t 192.168.111.130:80 -r 192.168.111.133
+[root@www ~]# ipvsadm -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.111.130:80 wrr
+  -> 192.168.111.133:80           Route   1      0          0
+3)修改集群服务器设置（修改调度算法，将加权轮询修改为轮询）当算法是轮询的时候 哪怕给服务器加权重也无效
+[root@www ~]# ipvsadm -E -t 192.168.111.130:80 -s lc  //修改前面的服务器  -t代表tcp  -s代表后面跟随的是什么算法
+[root@www ~]# ipvsadm -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.111.130:80 lc
+  -> 192.168.111.133:80           Route   1      0          0
+  
+[root@www ~]# ipvsadm -e -t 192.168.111.130:80 -r 192.168.111.133 -m -w 2//修改后面的
+[root@www ~]# ipvsadm -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.111.130:80 lc
+  -> 192.168.111.133:80           Masq    2      0          0
+
+[root@www ~]# ipvsadm -D -t 192.168.111.130:80  //把集群删掉
+[root@www ~]# ipvsadm -Ln//查看lvs状态
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+
+[root@www ~]# ipvsadm-save -n > /etc/sysconfig/ipvsadm  //永久保存所有规则
+[root@www ~]# ipvsadm -C  //清空所有规则
+
+
+案例2：部署lvs-nat集群
+步骤：
+https://www.likecs.com/show-307280395.html
+https://www.likecs.com/show-307412249.html
+
+lvs(keepalived)实现高可用集群
+1.自动匹配lvs规则 ipvadm就无需使用了
+2.带有健康检查
+3.vrrp
+Keepalived的作用是检测服务器的状态，如果有一台web服务器宕机，或工作出现故障，Keepalived将检测到，并将有故障的服务器从系统中剔除，同时使用其他服务器代替
+该服务器的工作，当服务器工作正常后Keepalived自动将服务器加入到服务器群中，这些工作全部自动完成，不需要人工干涉，需要人工做的只是修复故障的服务器。
+
+部署keepalived的步骤:
+https://www.freesion.com/article/3675435360/
+
+判断一个网站是好还是坏的三种方法（健康检查）：
+1.ping 192.168.111.130  //对主机进行检查
+2.curl http://192.168.111.130  //对服务端口检查
+3.ab=`curl $url | md5sum` //不仅对端口检查还校验哈希值
+  if [ $ab == 预设md5值 ]
+  则没问题
+  
+  
+nat模式主机模式和桥接模式：
+https://blog.csdn.net/fuhanghang/article/details/126497101
+
+1.mysql主从同步：
+ 1.1 主从同步介绍
+ 1.2 主从同步工作过程
+ 1.3 配置主从同步
+ 1.3.1配置主服务器192.168.111.130
+vim /etc/my.cnf
+  4 [mysqld]
+  5 server_id=51
+  6 log-bin=master51
+[root@www ~]# systemctl restart mysqld.service
+[root@www ~]# ls /var/lib/mysql/master51.*
+/var/lib/mysql/master51.000001  /var/lib/mysql/master51.index
+
+
+或者
+[root@www ~]# mysql -uroot -p123456
+mysql> show master status;
+结果可以得到master51.000001', MASTER_LOG_POS=659;      
+mysql> create user 'repluser'@'%' identified with mysql_native_password by 'Root@123456';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> grant replication slave on *.* to 'repluser'@'%';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show grants for 'repluser'@'%'
+    -> ;
++--------------------------------------------------+  
+| Grants for repluser@%                            |
++--------------------------------------------------+
+| GRANT REPLICATION SLAVE ON *.* TO `repluser`@`%` |
++--------------------------------------------------+
+1 row in set (0.00 sec)
+
+1.3.2配置从服务器192.168.111.140
+[root@localhost ~]# vim /etc/my.cnf
+[mysqld]
+server_id=52
+[root@localhost ~]# systemctl restart mysqld
+
+
+
+
+学习如何在没有做成从服务器之前让从服务器具备主服务器上的数据（也即是将主服务器上的数据同步到从服务器）步骤（确保与主服务器数据一致）：
+[root@www ~]# mysqldump -uroot -p123456 --source-data db01 > /root/db01.sql      //备份
+[root@www ~]#  scp /root/db01.sql root@192.168.111.140:/opt/
+db01.sql                                                                                                           100% 3074  00:00  
+
+[root@localhost ~]# mysql -u root -p123456
+mysql> create database db01;
+mysql> exit
+[root@localhost ~]# mysql -u root -p123456
+mysql> STOP SLAVE IO_THREAD;
+mysql> exit
+[root@localhost ~]# mysql -uroot -p123456 db01 < /opt/db01.sql           //还原
+mysql: [Warning] Using a password on the command line interface can be insecure.
+[root@localhost ~]# mysql -uroot -p123456
+mysql> use db01;
+mysql> show tables;    //复制成功 如下所示
++----------------+
+| Tables_in_db01 |
++----------------+
+| score          |
+| tb_user        |
++----------------+
+2 rows in set (0.00 sec)
+
+mysql> exit;
+[root@localhost ~]# grep master51 /opt/db01.sql
+CHANGE MASTER TO MASTER_LOG_FILE='master51.000001', MASTER_LOG_POS=659;
+
+
+以上步骤是为了确保与主服务器数据一致，所以下面开始配置主从复制方法原理：
+指定主服务器信息：
+mysql>change master to
+   ->master_host="192.168.111.130",  //主库ip地址
+   ->master_user="repluser",         //主库授权用户
+   ->master_password="Root@123456",  //授权用户密码
+   ->master_log_file="master51.000001", //主库日志文件
+   ->master_log_pos=659;              //日志偏移量
+   
+mysql> start slave;           //启动slave进程
+注意：1.master信息回自动保存到/var/lib/mysql/master.info文件
+      2.若更改主库信息时，应先执行stop slave; 修改后在执行start slave；
+
+下面具体操作从服务器步骤（mysql路径：/var/lib/mysql 方便用于查看各种配置文件）：
+[root@localhost ~]# mysql -uroot -p123456
+mysql> STOP SLAVE IO_THREAD;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+mysql> change master to master_host='192.168.111.130',master_user='repluser',master_password='Root@123456',master_log_file='master51.000001',master_log_pos=659;
+Query OK, 0 rows affected, 8 warnings (0.01 sec)
+mysql> start slave;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+配置成功标志：1.mysql> show slave status\G;
+                Slave_IO_Running: Yes
+                Slave_SQL_Running: Yes
+			和
+			  2.Master_Log_File: master51.000003
+			    Relay_Master_Log_File: master51.000003
+			以及
+			  3.[root@localhost ~]# mysql -h192.168.111.141 -uroot  -p123456//在从服务器上连接主服务器数据库能够连接成功
+
+
+ 1.4 排错
+ （思路：可在show slave status\G页面的 Last_IO_Error字段查看Slave_IO_Running状态不对的原因。
+ 排错思路链接：
+ 【Linux/云计算全套视频 完整版共1000节（上）】 https://www.bilibili.com/video/BV19i4y1N7Y5/?p=549&share_source=copy_web&vd_source=cf0427249933eb48651f3c77a759516f）
+ 
+具体排错步骤：
+问题：在配置此主从同步过程中 开始时出现Slave_IO_Running: running问题 原因是主从不同步 
+解决办法：先用mysql>show master status;查看主服务器状态信息、再用[root@localhost ~]# grep master51 /opt/db01.sql查看从机master状态信息 若信息不一致反复进行手动配置主从步骤（即是保持从库与主库信息一致的步骤）
+          直至一致时  修改对应的master_log_file以及master_log_pos的值 然后等待一段时间使得主从同步 再start slave； 最后用show slave status\G; 查看到两个yes即可
+		  
+		  
+暴力解决：若一直找不到错误则：删掉从库的四个配置文件再从新change master to master_host='192.168.111.130',master_user='repluser',master_password='Root@123456',master_log_file='master51.000001',master_log_pos=659;		  
+[root@localhost mysql]#rm -rf master.info relay-log.info h52-relay-bin.*
+[root@localhost mysql]#systemctl restart mysqld.service
+mysql->change master to master_host='192.168.111.130',master_user='repluser',master_password='Root@123456',master_log_file='master51.000001',master_log_pos=659;	  
+mysql->start slave;
+mysql->show slave status\G;	
+注意：克隆的虚拟机需要改/var/lib/mysql/auto.cnf 里的UUID使得主库从库UUID不相同 然后重启mysql服务 再查看master status 重新change master……等操作。
+   1.5 验证主从同步配置（在客户端连接主服务器访问数据）
+       1.5.1 在主服务器添加授权用户给客户端连接使用
+#mysql -u root -p123456
+mysql> create database db1;
+Query OK, 1 row affected (0.05 sec)
+
+mysql> create user 'admin'@'%' identified by 'Root@123456';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> grant all on db1.* to 'admin'@'%';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> grant select,insert,update,delete on db01.* to 'admin'@'%';
+Query OK, 0 rows affected (0.00 sec)
+
+       1.5.2 客户端使用授权用户连接主服务器	，访问数据
+此时需要另外一台机器(用于连接到主服务器来对授权的用户和数据库进行操作，然后观察从数据库同步情况)：
+[root@192.168.111.133]#mysql -h192.168.111.130 -uadmin -pRoot@123456   //远程连接主服务器以便操作上述授权的两个数据库
+mysql>show grants;
+mysql>delete from db01.score where name='tom';
+mysql>select * from db01.score;
+mysql>show master status;
+
+
+       1.5.3 在从服务器主机查看数据（能够看到和主服务器同样的数据就成功了)
+[root@localhost ~]#mysql -u root -p123456
+mysql>show slave status\G;
+如果报错：last_SQL_Error:……
+那么进行如下操作：
+
+mysql> stop slave;
+mysql> grant all on *.* to admin@"192.168.111.%" identified by "Root@123456";
+mysql> start slave;
+mysql> show slave status\G;
+
+mysql> select * from db01.score;
+
+
+
+	   
+2.复制模式
+ 2.1 主从同步结构模式？一主一从、一主多从、主主结构（互为主从）
+ http://www.ppmy.cn/news/50568.html?action=onClick
+ https://blog.csdn.net/weixin_45843450/article/details/105399649
+ 2.2 配置-主多从模式
+	  配置主从从模式
+	  配置主主模式  
+ 主从同步复制模式
+  1.类型：
+   异步复制模式（默认）
+   -主库执行完一次事务后，立即将结果返回给客户端，并不关心从库是否已经接受并处理
+   全同步复制模式
+   -当主库执行完一次事务，且所有从库都执行了该事务后才将结果返回给客户端
+   半同步复制模式
+   -介于一步复制和全同步复制之间
+   -主库在执行完一次事务后，等待至少一个从库接收到并写到relay log中才将结果返回给客户端
+   
+  2.把主从同步修改为半同步复制模式
+ 开启半同步的方式有两种：
+ 2.1.命令行方式：
+ https://blog.csdn.net/m0_45036821/article/details/105932409  //前半部分是命令行方式
+
+ 2.2.写进配置文件
+ https://blog.csdn.net/m0_45036821/article/details/105932409  //后半部分写入配置文件
+ 
+ 
+ 
+主从复制原理：
+master
+ -启用binlog日志
+slave
+ -slave IO:复制master主机binlog日志文件里的SQL命令到本机的relay-log文件里。
+ -slave SQL：执行本机relay-log文件里的SQL语句，实现与Master数据一致。
+ 
+构架思路：
+配置主服务器：
+ -启用binlog日志、授权用户、查看binlog日志信息
+配置从服务器
+ -设置sever_id
+ -确保与主服务器数据一致
+ -指定主库信息
+ -启动slave程序
+ -查看状态信息
+ 
+ 
+mysql第二天
+1.数据读写分离：
+1.1什么是数据读写分离？
+把客户端访问数据的读(select)请求和写(insert update delete)请求分别分配给不同的数据库服务器处理。
+1.2如何试下客户端访问数据的，读写分离
+  1.通过程序实现
+  select------>192.168.111.130
+  insert/update/delete----------->192.168.111.142
+  2.通过配置服务实现读写分离（在服务器上安装软件 提供服务 实现读写分离）
+    mysql-proxy  mycat  maxscale  //这些软件有个统一的名称 叫中间件
+   客户端访问时的步骤： client----->中间件服务器------>mysqld
+  3.为什么要配置数据读写分离？
+    减轻服务器压力
+ 
+
+mysql配置文件路径：https://www.cnblogs.com/shamo89/p/7637353.html
+ 
+
+2.mysql多实例：
+https://www.cnblogs.com/sunyiming023654/p/16437659.html
+https://segmentfault.com/a/1190000010078035?utm_source=sf-similar-article
+
+
+
+
+3.分库分表：https://blog.csdn.net/m0_50657703/article/details/128373741
+mycat既可以做数据读写分离服务也可以提供数据分片服务
+8066 数据访问端口，即进行 DML 和 DDL 操作。
+9066 数据库管理端口，即 mycat 服务管理控制功能，用于管理mycat的整个集群状态。
+
+mycat原理：
+Mycat的原理中最重要的一个动词是“拦截”，它拦截了用户发送过来的SQL语句，首先对SQL语句做了一些特定的分析：如分片分析、路由分析、读写分离分析、缓存分析等，
+然后将此SQL发往后端的真实数据库，并将返回的结果做适当的处理，最终再返回给用户。
+
+数据分片拓扑：
+                                
+                      |----->数据库服务器:53
+					  |
+  50           56     |
+客户端----->分片服务器------>数据库服务器:54
+                      |
+                      |
+                      |----->数据库服务器:55
+
+1.相关概念
+2.配置mycat服务器
+  2.1安装JDK:
+[root@56 ~]# which java
+/usr/local/jdk1.8.0_171/bin/java
+[root@56 ~]# java -version
+java version "1.8.0_171"
+Java(TM) SE Runtime Environment (build 1.8.0_171-b11)
+
+  2.2装包
+ 路径：/usr/local/mycat
+ 
+  2.3配置
+   2.3.1目录结构：
+   -bin   //mycat命令
+   -catlet //扩展功能
+   -conf   //配置文件
+   -lib    //mycat使用的jar包
+   -logs   //mycat启动日志和运行日志
+   -wrapper.log  //mycat服务启动日志
+   -mycat.log    //记录SQL脚本执行后的报错内容
+  
+   2.3.2重要配置文件说明：
+   -server.xml    //设置连接账号及逻辑库
+   -schema.xml    //配置数据分片
+   -rule.xml      //分片规则
+   -其他文件      //函数调用文件
+   
+   2.3.3修改配置文件：
+   1.定义连接用户和逻辑库名
+        [root@56 mycat]# vim /usr/local/mycat/conf/server.xml(使用默认配置)
+   2.数据分片配置
+        定义分片的表（scheme.xml里面的字段含义）：
+		  -<schema>……</schema>      //定义分片信息
+		  -<table>……</table>        //定义表
+		  -name                     //定义逻辑库名或逻辑表名
+		  -dataNode                 //指定数据节点名
+		  -rule                     //指定使用的分片规则
+		  -type=global              //数据不分片存储 每个节点都存储一份
+		  server.xml里的  name='schemas'  TESTDB 这个表名 应与scheme.xml里的schema name ="TESTDB" 一致
+		  
+        [root@56 mycat]# cp /usr/local/mycat/conf/schema.xml /root/
+		[root@56 mycat]# sed -i '56,77d' /usr/local/mycat/conf/schema.xml
+		[root@56 mycat]# sed -i '39,42d' /usr/local/mycat/conf/schema.xml
+		[root@56 mycat]# sed -i '16,18d' /usr/local/mycat/conf/schema.xml
+		[root@56 mycat]# vim /usr/local/mycat/conf/schema.xml
+		                           进入配置文件后进行三个主机的配置 修改主机名和对应IP以及数据库名
+   3.配置数据库服务器（3台数据服务器）
+      3.1 创建存储数据的库
+	  三个主机分别创建一个库：
+	 53]# mysql -uroot -p123456 -e "create database db1"
+     54]# mysql -uroot -p123456 -e "create database db2"
+	 55]# mysql -uroot -p123456 -e "create database db3"
+	  3.2 添加mycat连接用户pljyaya
+	 [53-55] mysql>grant all on *.* to pljyaya@"%" identified by "12345"//三台机器都添加此语句
+	  	 
+   4.启动服务
+      56 mycat]# /usr/local/mycat/bin/mycat status
+	  Mycat-server is not running.
+	  56 mycat]# /usr/local/mycat/bin/mycat start
+   5.查看服务状态
+      56 mycat]# netstat -utnlp | grep :8066
+      56 mycat]# ls /usr/local/mycat/logs/
+	  mycat.log  mycat.pid wrapper.log
+   6.排错
+      56 mycat]# tail -f /usr/local/mycat/logs/wrapper.log
+
+   7.测试配置
+      7.1 客户端50 连接mycat服务器访问数据
+	  50 ~]# mysql -h192.168.4.56 -P8806 -uroot -p123456
+	  mysql> show databases;
+	       > use TESTDB;
+		   > show tables;
+		   > desc company;
+	  error : table 'db1.company' doesn't exist
+      7.2 分片规则(都在56这台mycat服务器上进行操作)
+	       7.2.1 sharding -by -intfile
+                 枚举法:字段值必须在列举范围内选择
+eg:				 
+#vim /usr/local/mycat/conf/schema.xml
+ <table name="employee" primaryKey="ID" dataNode="dn1"    //employee这个表用到的是sharding-by-intfile这个规则  所以后面创建的表也是employee 这都应该是对应的
+                     rule="sharding-by-intfile" />
+#vim /usr/local/mycat/conf/rule.xml    //先通过查看分片规则调用的算法找到算法对应的函数块也即是hash-int函数块
+ 26         <tableRule name="sharding-by-intfile">
+ 27                 <rule>
+ 28                         <columns>sharding_id</columns>
+ 29                         <algorithm>hash-int</algorithm>
+ 30                 </rule>
+ 31         </tableRule>
+#vim  /usr/local/mycat/conf/rule.xml     //再查看hash-int函数从而找到分片规则对应的配置文件  //通过查看分片规则调用的算法找到算法对应的文件也就是分片规则对应的配置文件partition-hash-int.txt
+ 96         <function name="hash-int"
+ 97                 class="io.mycat.route.function.PartitionByFileMap">
+ 98                 <property name="mapFile">partition-hash-int.txt</property>
+ 99         </function>
+
+//查看分片规则的配置文件					 
+vim /usr/local/mycat/conf/partition-hash-int.txt//如果有三个分片服务器就写三个 0代表dn1 1代表dn2 2代表dn3 前面数字是枚举分配的写的随机数
+  1 10000=0
+  2 10010=1
+  3 10020=2
+:wq
+
+# /usr/local/mycat/bin/mycat stop   //服务停掉
+# /usr/local/mycat/bin/mycat start   //服务启动
+# netstat -utnlp | grep :8066        //查看端口 看服务是否启动成功
+
+                        建表存储数据
+50]#mysql -h192.168.4.56 -P8066 -uroot -p123456
+mysql> use TESTDB;
+mysql> create table employee (ID int primary key auto_increment,sharding_id int ,name char(15),home char(50),sex enum("man","woman"));
+mysql> desc employee;	
+
+mysql> insert into employee(sharding_id,name,home,sex) values (10000,"tom","usa","man");
+mysql> insert into employee(sharding_id,name,home,sex) values (10010,"tom","usa","man");
+mysql> insert into employee(sharding_id,name,home,sex) values (10020,"tom","usa","man");					
+mysql> select * from employee;
+在这个分片服务器上会出现刚刚插入的三条记录
+然后应该分别登录53,54,55查看三台数据库服务器的信息：
+53 ~]#mysql -u root -p123456 
+mysql> select * from db1.employee
+出现一条10000的数据
+54 ~]#mysql -u root -p123456
+mysql> select * from db2.employee
+出现一条10010的数据		   
+55 ~]#mysql -u root -p123456
+mysql> select * from db3.employee
+出现一条10020的数据	 
+
+根据以上结果可知分片服务搭建成功
+
+           不分片存储记录要求type=global
+查看配置文档vim schema.xml可知：
+<table name='company' primaryKey="ID" type="global" dataNode="dn1,dn2,dn3" />这个字段是不分片存储
+以下操作在分片服务器上插入记录 然后在三台数据服务器分别查看记录即可得到 四台服务器都有相同的完整数据
+
+
+
+部署MHA集群（mysql服务高可用集群）MHA只对mysql服务做高可用集群：
+MHA Manager(管理节点):管理所有数据库服务器
+工作过程：
+-由Manager定时探测集群中的master节点
+-当master故障时，Manager自动将拥有最新数据的slave提升为新的master
+MHA Node(数据节点)：存储数据的mysql服务器
+
+拓扑图结构保存在：截图保存文件里面
+50 客户端
+51 当前主库 MHA Node
+52 备用主库 MHA Node
+53 备用主库 MHA Node
+57 管理主机 MHA Manager
+100 VIP地址
+
+配置MHA的必要条件：
+  必须是一主多从结构
+  客户端访问必须连接vip地址且vip地址必须在主数据服务器上
+  把坏掉的数据库服务器添加到集群里时，必须手动配置数据一致、把服务器添加为当前主服务器的从库、添加到集群里
+  
+PXC介绍：mysql服务高可用集群软件
+   与MHA相比：
+         数据强一致性、无同步延迟
+		 没有主从切换操作、无需使用虚拟IP
+		 支持InnoDB存储引擎
+		 多线程复制
+		 部署使用简单
+		 支持节点自动加入、无需手动拷贝数据
+		 
+PXC集群主要由两部分组成：（同步、多主复制插件）
+
+集群知识回顾：
+集群分类： LB 负载均衡集群
+           HA 高可用集群（主备）
+		   HPC 高性能计算集群
+		   
+集群软件： LVS,nginx,haproxy,keepalived
+
+
+
+
+
+系统监控命令：
+ps
+uptime
+free
+swapon -s
+df -h
+ifconfig
+metstat或ss
+ping
+traceroute
+iostat
+
+zabbix简介：
+zabbix是一个高度集成的监控解决方案
+通过c/s模式采集监控数据
+通过b/s模式实现web管理
+
+监控服务器：
+  -监控服务器可以通过SNMP或Agent采集数据
+  -数据可以写入MySQL，Oracle等数据
+  -服务器使用LNMP实现web前端的管理
+
+被监控主机：
+  -被监控主机需要安装Agent
+  -常见的网络设备一般支持SNMP
+
+安装部署zabbix服务：https://www.cnblogs.com/Sungeek/p/9069999.html  
+https://www.zsythink.net/archives/519
+https://blog.csdn.net/qq_30238955/article/details/126486687
+
+
+
+
+我们已经将zabbix-server、zabbix-database、zabbix-web安装在了192.168.1.108上。
+
+同时，我们将zabbix-agent安装在了192.168.1.107上。
+
+所以此处，192.168.1.107就是被监控的对象，我们需要将107添加为zabbix主机。
+
+iptables:四表五链
+https://huaweicloud.csdn.net/635644cad3efff3090b5cf77.html?spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-7-122527077-blog-80542910.235^v38^pc_relevant_default_base&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-7-122527077-blog-80542910.235^v38^pc_relevant_default_base&utm_relevant_index=8
+https://blog.csdn.net/weixin_56422027/article/details/117803971?spm=1001.2101.3001.6650.13&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-13-117803971-blog-80542910.235%5Ev38%5Epc_relevant_default_base&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-13-117803971-blog-80542910.235%5Ev38%5Epc_relevant_default_base&utm_relevant_index=14
+
+表是功能分类
+链是ip包传输的方向
+rhel7默认使用firewalld作为防火墙
+但是firewalld底层还是调用包过滤防火墙iptables
+[root@localhost ~]# systemctl stop firewalld.service
+[root@localhost ~]# systemctl disable firewalld.service
+[root@localhost ~]# yum -y install iptables-services
+[root@localhost ~]# systemctl start iptables.service
+1.1iptables防火墙 相关概念
+1.2iptables的相关用法
+
+链内的规则匹配顺序：
+         顺序比对，匹配即停止（LOG除外）
+		 若无任何匹配，则按该链的默认策略处理
+
+处理动作（当防火墙服务器的数据包与条件匹配时执行的处理方法）
+ACCEPT:允许通过或放行
+DROP:直接丢弃，不给出任何回应
+REJECT:拒绝通过，必要时会给出提示
+LOG:记录日志，然后传给下一条规则
+
+[root@www ~]# iptables -t -F
+[root@www ~]# iptables -t nat -F
+[root@www ~]# iptables -t mangle -F
+[root@www ~]# iptables -t raw -F
+[root@www ~]# iptables-save > /etc/sysconfig/iptables
+
+[root@www ~]# iptables -t filter -nL --line-numbers
+[root@www ~]# iptables -t nat -nL --line-numbers
+[root@www ~]# iptables -t mangle -nL --line-numbers
+[root@www ~]# iptables -t raw -nL --line-numbers
+[root@www ~]# iptables-save > /etc/sysconfig/iptables
+
+
+
+2 filetr表控制
+     
+
+               iptables -t filter -A INPUT -p tcp --dport 22 -j ACCEPT
+[root@www ~]#  iptables -t mangle -nL --line-numbers
+               iptables -t filter -P INPUT DROP
+[root@www ~]#  iptables-save > /etc/sysconfig/iptables
+               systemctl stop iptables
+			   yum install -y httpd
+			   echo 123 > /var/www/html/a.html
+			   systemctl start httpd
+			   netstat -utnlp | grep :80
+			   systemctl start iptables
+			   iptables -t filter -nL --line-numbers
+####放行80端口：
+[root@www ~]# iptables -t filter -I INPUT -p tcp --dport 80 -j ACCEPT
+[root@www ~]#  iptables -t filter -nL --line-numbers
+再次访问http://192.168.111.130访问成功
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+
+####放行ICMP 
+[root@www ~]# iptables -t filter -A INPUT -p icmp -j ACCEPT
+再次ping 192.168.111.157可任意ping通  //双方可以互相ping通
+[root@www ~]# iptables-save > /etc/sysconfig/iptables
+[root@www ~]#  iptables -t filter -nL --line-numbers
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+3    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0
+
+
+          
+####要求130可以ping通157 反之不行
+[root@www ~]# iptables -t filter -D INPUT 3   //先把刚刚设置的ICMP防火墙规则删掉
+[root@www ~]#  iptables -t filter -nL --line-numbers
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+
+
+[root@www ~]#  iptables -t filter -nL --line-numbers //再单独添加icmp回应报文
+[root@www ~]# iptables -t filter -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT              
+[root@www ~]#  iptables -t filter -nL --line-numbers
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+3    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 0
+[root@www ~]# iptables-save > /etc/sysconfig/iptables
+
+结果如下：
+[root@www ~]# ping 192.168.111.157    //ping通
+PING 192.168.111.157 (192.168.111.157) 56(84) bytes of data.
+64 bytes from 192.168.111.157: icmp_seq=1 ttl=64 time=0.697 ms
+
+[root@localhost ~]# ping  192.168.111.130  //ping不通
+PING 192.168.111.130 (192.168.111.130) 56(84) bytes of data.
+^C
+--- 192.168.111.130 ping statistics ---
+4 packets transmitted, 0 received, 100% packet loss, time 3004ms
+
+在自己写防火墙规则之前 先清除表中所有链里的规则 然后保存一下 然后就永久生效了
+
+
+下面都为网络型防火墙 以上都为主机型防火墙（开了防火墙自己保护自己）
+
+如若有三台主机 A B C B主机为AC主机连接的关口  则在AC通信时 B 要同时放行客户端请求和服务器端响应的源和目的两个端口
+eg: #iptables -t filter -A FORWARD -p tcp --dport 80 -j ACCEPT
+    #iptables -t filter -A FORWARD -p tcp --sport 80 -j ACCEPT
+	
+3 扩展匹配  MAC地址匹配  多端口匹配   IP范围匹配
+可以同时放行多个端口：
+eg: #iptables -t filter -A FORWARD -p tcp -m multiport --dport 22,80 -j ACCEPT 
+    #iptables -t filter -A FORWARD -p tcp -m multiport --sport 22,80 -j ACCEPT 
+
+4 nat表典型应用（让多台私有IP地址主机共享同一个公网ip地址上网）
+
+
+
+修改主机名相关的配置文件：/etc/hosts    /etc/hostname
+
+docker:镜像 容器 仓库
+[root@www ~]#docker search busybox
+[root@www ~]#docker pull busybox
+[root@www ~]# docker images    //上传busybox成功
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+[root@www ~]# docker save busybox:latest -o busybox.tar  //制作busybox的tar包 镜像另存为tar包
+[root@www ~]# tar tvf busybox.tar
+[root@www ~]# ls  //在130虚拟机上查看自己制作的tar包busybox.tar包的存在
+34e8fab28d4d7a5f793edacf0c57cea67d836802c13080d6b2262ca5d6adeac6
+anaconda-ks.cfg
+beae173ccac6ad749f76713cf4440fe3d21d1043fe616dfbe30775815d1d0f6a.json
+busybox.tar
+[root@www ~]# chmod -R 777 /root/busybox.tar //给要被复制的文件被读写执行的权限
+[root@docker2 ~]# rsync -av 192.168.111.130:/root/busybox.tar /root/  //在161虚拟机上执行同步命令
+[root@docker2 ~]# ls -lrt   //查看命令发现同步成功
+总用量 225140
+drwxr-xr-x. 8   10  143       255 3月  29 2018 jdk1.8.0_171
+-rw-------. 1 root root      1263 4月  14 22:36 anaconda-ks.cfg
+-rw-r--r--. 1 root root     14653 4月  18 17:00 db01.sql
+-rw-r--r--. 1 root root      1540 4月  18 17:14 score.sql
+-rw-r--r--. 1 root root 190890122 4月  19 21:48 jdk-8u171-linux-x64.tar.gz
+-rw-r--r--. 1 root root  38145504 4月  19 21:48 Mycat-server-1.6.7.3-release-20210913163959-linux.tar.gz
+-rwxr-xr-x. 1 root root      4295 6月   2 09:57 schema.xml
+-rwxrwxrwx  1 root root   1468416 6月  14 12:13 busybox.tar
+[root@docker2 ~]# docker load -i busybox.tar   //使用tar包导入镜像
+[root@docker2 ~]# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+busybox      latest    beae173ccac6   17 months ago   1.24MB
+//接下来同样的方式在130虚拟机上上传nginx tomcat并制作成tar包然后上传到161主机上导入镜像
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   17 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+
+[root@docker2 ~]# docker images  //这里为了演示仅在161虚拟机生成两个镜像即可
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+busybox      latest    beae173ccac6   17 months ago   1.24MB
+nginx        latest    605c77e624dd   17 months ago   141MB
+tomcat       latest    fb5657adc892   17 months ago   680MB
+
+启动镜像生成一个容器（容器的本质其实是一种隔离手段）
+
+ifconfig  net //网络命名空间
+[root@www ~]# docker run -it docker.io/centos:7  /bin/bash   //将镜像生成容器
+[root@23f47bf67c67 /]# cd /etc/yum.repos.d/
+[root@23f47bf67c67 yum.repos.d]# yum provides ifconfig
+[root@23f47bf67c67 yum.repos.d]# yum install net-tools
+[root@23f47bf67c67 yum.repos.d]# ifconfig
+pstree pid //进程命名空间
+[root@23f47bf67c67 ~]# yum install psmisc
+[root@23f47bf67c67 ~]# pstree -p   //只能看到属于该容器的进程
+bash(1)---pstree(59)
+
+/etc/passwd   user   //用户命名空间
+[root@23f47bf67c67 ~]# cat /etc/passwd
+
+kill  ipc   //信号向量
+[root@www ~]# sleep 100 &
+[1] 17158
+[root@www ~]# ps -ef
+root      17158  13462  0 18:26 pts/0    00:00:00 sleep 100
+[root@www ~]# docker run -it docker.io/centos:7  /bin/bash
+[root@ae9b8a4ee871 /]# ps -ef
+UID         PID   PPID  C STIME TTY          TIME CMD
+root          1      0  1 10:27 pts/0    00:00:00 /bin/bash
+root         15      1  0 10:27 pts/0    00:00:00 ps -ef
+[root@ae9b8a4ee871 /]# kill 17158
+bash: kill: (17158) - No such process
+ 
+rm  mount   //容器里看到的根目录和真实虚拟机里的不一样
+[root@ae9b8a4ee871 ~]# ls /
+anaconda-post.log  bin  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  
+[root@www ~]# ls /
+bin   data  etc   lib    media  nsd1905  proc    root  sbin  sys  usr
+boot  dev   home  lib64  mnt    opt      public  run   srv   tmp  var
+
+
+
+容器与虚拟机的区别：
+[root@www ~]# sleep 12345       //虚拟机130的修眠进程
+[root@docker2 ~]# ps -efww | grep 12345      //虚拟机161无法查出130的休眠进程说明虚拟机之间是相互隔离的
+root       3271   2941  0 19:13 pts/0    00:00:00 grep --color=auto 12345
+
+[root@www ~]# docker run -it docker.io/centos:7  /bin/bash    //在130主机内启动centos镜像生成一个容器并且进入容器   
+[root@141d3712f298 /]# sleep 12345     //容器centos的休眠进程
+[root@docker2 ~]# ps -efww | grep 12345  //虚拟机161无法查出130容器的休眠进程
+root       3273   2941  0 19:13 pts/0    00:00:00 grep --color=auto 12345
+
+[root@docker2 ~]# ssh root@192.168.111.130  //在虚拟机161上登上虚拟机130
+root@192.168.111.130's password:
+Last login: Wed Jun 14 19:05:38 2023 from 192.168.111.161
+[root@www ~]# ps -efww | grep 12345       //发现虚拟机130能查出刚刚130虚拟机的休眠进程以及130的容器内centos的休眠进程
+root      20509  17891  0 19:13 pts/2    00:00:00 sleep 12345
+root      20528  19887  0 19:13 pts/0    00:00:00 sleep 12345
+root      20628  20584  0 19:14 pts/3    00:00:00 grep --color=auto 12345
+
+[root@www ~]# kill 20528         //虚拟机130还能控制130内容器的休眠进程的消亡
+[root@141d3712f298 /]# sleep 12345
+Terminated
+
+[root@www ~]# kill 20509     //130虚拟机杀死130虚拟机内的休眠进程
+[root@www ~]# sleep 12345
+已终止
+
+容器没有系统
+镜像命令列表：
+-docker images //查看镜像列表
+-docker histoy //查看镜像制作历史
+-docker inspect //查看镜像底层信息
+-docker pull    //下载镜像
+-docker push    //上传镜像
+-docker rmi     //删除本地镜像
+-docker save    //镜像另存为tar包
+-docker load    //使用tar包导入镜像
+-docker search  //搜索镜像
+-docker tag     //修改镜像名称和标签
+
+docker tag://相当于重新创建了一个软链接
+eg:
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+[root@www ~]# docker tag redis:5.0 redis:latest
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+redis                         latest    c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+[root@www ~]# docker tag redis:5.0 redi:latest
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redi                          latest    c5da061a611a   18 months ago   110MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+redis                         latest    c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+
+
+
+docker rmi
+eg:
+[root@www ~]# docker rmi redi:latest
+Untagged: redi:latest
+您在 /var/spool/mail/root 中有新邮件
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+redis                         latest    c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+[root@www ~]# docker rmi redis:latest
+Untagged: redis:latest
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+
+
+
+容器命令列表：容器其实就是一个进程   管理操作控制容器都需要使用容器ID 
+-docker run         //运行容器
+-docker ps          //查看容器列表
+-docker stop        //关闭容器
+-docker start       //启动容器
+-docker restart     //重启容器
+-docker attach|exec //进入容器
+-docker inspect     //查看容器底层信息
+-docker top         //查看容器进程列表     //在容器外查看容器内部运行命令的情况
+-docker rm          //删除容器
+
+
+[root@www ~]# docker run -itd nginx:latest  //交互式终端后台运行
+85130d2ec3390162508c72bfc6a1dff39d8484407e79335f086e49e5ed6600b1
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED       STATUS                  PORTS     NAMES
+85130d2ec339   nginx:latest   "/docker-entrypoint.…"   9 hours ago   Up 9 hours              80/tcp    hungry_meitner
+[root@www ~]# docker stop 85130d2ec339
+85130d2ec339
+您在 /var/spool/mail/root 中有新邮件
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@www ~]# docker start 85130d2ec339
+85130d2ec339
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED       STATUS         PORTS     NAMES
+85130d2ec339   nginx:latest   "/docker-entrypoint.…"   9 hours ago   Up 3 seconds   80/tcp    hungry_meitner
+
+
+docker top用法
+[root@www ~]# docker ps -q
+262d764dafc1
+85130d2ec339
+[root@www ~]# docker top 262d764dafc1  //可以在容器外查看容器内进程的运行
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                33876               33855               0                   09:15               pts/0               00:00:00            /bin/bash
+root                33940               33876               99                  09:16               pts/0               00:03:59            awk BEGIN{while(1){}}
+[root@www ~]# docker top 85130d2ec339
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                33593               33572               0                   09:12               pts/0               00:00:00            nginx: master process nginx -g daemon off;
+101                 33638               33593               0                   09:12               pts/0               00:00:00            nginx: worker process
+101                 33639               33593               0                   09:12               pts/0               00:00:00            nginx: worker process
+
+//镜像是文件 容器是镜像运行时的实体
+用docker inspect查看容器时比镜像多一个动态信息 包括IP 子网掩码 网关地址等 并且可以在虚拟机内通过curl来访问查询到的IP
+docker rm:
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED        STATUS          PORTS     NAMES
+85130d2ec339   nginx:latest   "/docker-entrypoint.…"   10 hours ago   Up 22 minutes   80/tcp    hungry_meitner
+[root@www ~]# docker rm 85130d2ec339
+Error response from daemon: You cannot remove a running container 85130d2ec3390162508c72bfc6a1dff39d8484407e79335f086e49e5ed6600b1. Stop the container before attempting removal or force remove
+[root@www ~]# docker stop 85130d2ec339
+85130d2ec339
+[root@www ~]# docker rm 85130d2ec339
+85130d2ec339
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+
+前面的命令当成功后面的参数：
+[root@www ~]# docker run -itd nginx:latest
+f22474ad6d1881d54832f3c4148ddcd632c1cf4057be3df50bcf9dcfd7db640d
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS          PORTS     NAMES
+f22474ad6d18   nginx:latest   "/docker-entrypoint.…"   52 seconds ago   Up 50 seconds   80/tcp    elated_galileo
+[root@www ~]# docker rm f22474ad6d18
+Error response from daemon: You cannot remove a running container f22474ad6d1881d54832f3c4148ddcd632c1cf4057be3df50bcf9dcfd7db640d. Stop the container before attempting removal or force remove
+[root@www ~]# docker rm $(docker stop f22474ad6d18)
+f22474ad6d18
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+
+//删除所有容器
+[root@www ~]# docker rm $(docker ps -aq)
+abdb743a75ca
+45a2c3fa1a93
+30b6d65740c4
+2b42e6432826
+eb1b2174fec1
+262d764dafc1
+0f38e9a94b10
+9c85c1e2aa39
+046bc40ecaa9
+3cc42cc2c612
+141d3712f298
+b63e916103dd
+ae9b8a4ee871
+e85476ec2de4
+23f47bf67c67
+31fef2246704
+5c0ad173d6a9
+eed0f9771d99
+71bb0356b19f
+137c297feae5
+af953e3b9802
+b3a25603ddf6
+de96662ce950
+161a03b2e9bc
+336e94f720d5
+f5218b778791
+8e66f10f3b14
+f7d2cd4cff62
+de0ac04b1738
+618051aecb87
+[root@www ~]# docker ps -aq
+[root@www ~]#
+
+
+
+docker attact
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@www ~]# docker run -itd centos:7
+db23d58e3f4d09843d3b3d1991cd1cc3d9bcd3d106cdf8cf5369ba9624c6e12d
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED         STATUS         PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   6 seconds ago   Up 5 seconds             nifty_blackwell
+[root@www ~]# docker attach db23d58e3f4d
+[root@db23d58e3f4d /]# exit
+exit
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@www ~]# docker ps -a
+CONTAINER ID   IMAGE      COMMAND       CREATED              STATUS                      PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   About a minute ago   Exited (0) 20 seconds ago             nifty_blackwell
+[root@www ~]# docker start db23d58e3f4d
+db23d58e3f4d
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED         STATUS         PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   2 minutes ago   Up 4 seconds             nifty_blackwell
+
+
+docker exec
+[root@www ~]# docker start db23d58e3f4d
+db23d58e3f4d
+[root@www ~]# docker exec -it  db23d58e3f4d /bin/bash
+[root@db23d58e3f4d /]# exit
+exit
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS         PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   10 minutes ago   Up 7 minutes             nifty_blackwell
+[root@www ~]# docker exec -it  db23d58e3f4d /bin/bash
+[root@db23d58e3f4d /]# yum install vim net-tools psmisc
+[root@db23d58e3f4d /]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 7147  bytes 49902973 (47.5 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 4640  bytes 260718 (254.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@db23d58e3f4d /]# exit
+exit
+[root@www ~]# docker exec -it  db23d58e3f4d /bin/bash
+[root@db23d58e3f4d /]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 7147  bytes 49902973 (47.5 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 4640  bytes 260718 (254.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+docker attach与docker exec的区别
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS          PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   54 minutes ago   Up 51 minutes             nifty_blackwell
+[root@www ~]# docker exec -it db23d58e3f4d /bin/bash
+[root@db23d58e3f4d /]# pstree -p 0
+?()-+-bash(1)
+    `-bash(140)---pstree(156)
+[root@db23d58e3f4d /]# echo $$    //所以exec的退出是仅仅退出第一层
+140
+[root@db23d58e3f4d /]# exit
+exit
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS          PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   57 minutes ago   Up 55 minutes             nifty_blackwell
+
+
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS          PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   57 minutes ago   Up 55 minutes             nifty_blackwell
+[root@www ~]# docker attach db23d58e3f4d
+[root@db23d58e3f4d /]# echo $$
+1
+[root@db23d58e3f4d /]# pstree -p 0
+?()---bash(1)---pstree(157)
+[root@db23d58e3f4d /]# exit   //一共就一层所以attach就是完全退出
+exit
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@www ~]# docker start db23d58e3f4d
+[root@www ~]# docker attach db23d58e3f4d  //不想exit退出attach  想保留attach则按键 ctrl+pq
+[root@db23d58e3f4d /]# read escape sequence
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE      COMMAND       CREATED             STATUS         PORTS     NAMES
+db23d58e3f4d   centos:7   "/bin/bash"   About an hour ago   Up 4 minutes             nifty_blackwell
+
+
+
+
+eg:交互式自己手动自定义镜像 在原有的centos层上再加一层生成新的镜像
+[root@www ~]# docker ps -aq
+[root@www ~]# docker run -it centos:7
+[root@ecaa9b227558 /]# cd /etc/yum.repos.d/
+[root@ecaa9b227558 yum.repos.d]# ls
+CentOS-Base.repo       CentOS-Media.repo    CentOS-fasttrack.repo
+CentOS-CR.repo         CentOS-Sources.repo  CentOS-x86_64-kernel.repo
+CentOS-Debuginfo.repo  CentOS-Vault.repo
+[root@ecaa9b227558 yum.repos.d]# ifconfig
+bash: ifconfig: command not found
+[root@ecaa9b227558 yum.repos.d]# yum install vim net-tools psmisc iproute
+[root@ecaa9b227558 yum.repos.d]# cd
+[root@ecaa9b227558 ~]#  yum clean all
+Loaded plugins: fastestmirror, ovl
+Cleaning repos: base extras updates
+Cleaning up list of fastest mirrors
+[root@ecaa9b227558 ~]# exit
+exit
+[root@www ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@www ~]# docker ps -a    //前端盘
+CONTAINER ID   IMAGE      COMMAND       CREATED         STATUS                      PORTS     NAMES
+ecaa9b227558   centos:7   "/bin/bash"   8 minutes ago   Exited (0) 29 seconds ago             pedantic_ramanujan
+[root@www ~]# docker commit ecaa9b227558 myos:latest     //把刚刚的配好下载源的centos自定义为一个自命名的镜像包
+sha256:15fc1d74c0505c2cfe0212f2e41a2533e6dd1683323e7ae885857fb19154b388
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED              SIZE
+myos                          latest    15fc1d74c050   About a minute ago   288MB
+itheima_centos                1         2cd338d71d29   7 weeks ago          463MB
+busybox                       latest    beae173ccac6   17 months ago        1.24MB
+nginx                         latest    605c77e624dd   17 months ago        141MB
+tomcat                        latest    fb5657adc892   17 months ago        680MB
+redis                         5.0       c5da061a611a   18 months ago        110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago        303MB
+registry                      latest    b8604a3fe854   19 months ago        26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago        204MB
+centos                        7         eeb6ee3f44bd   21 months ago        204MB
+[root@www ~]# docker ps -a
+CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS                     PORTS     NAMES
+ecaa9b227558   centos:7   "/bin/bash"   16 minutes ago   Exited (0) 8 minutes ago             pedantic_ramanujan
+[root@www ~]# docker rm ecaa
+ecaa
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+myos                          latest    15fc1d74c050   4 minutes ago   288MB
+itheima_centos                1         2cd338d71d29   7 weeks ago     463MB
+busybox                       latest    beae173ccac6   17 months ago   1.24MB
+nginx                         latest    605c77e624dd   17 months ago   141MB
+tomcat                        latest    fb5657adc892   17 months ago   680MB
+redis                         5.0       c5da061a611a   18 months ago   110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago   303MB
+registry                      latest    b8604a3fe854   19 months ago   26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago   204MB
+centos                        7         eeb6ee3f44bd   21 months ago   204MB
+[root@www ~]# docker run -it myos:latest
+[root@45c19833f1dc /]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 8  bytes 656 (656.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@45c19833f1dc /]# pstree
+bash---pstree
+
+[root@www ~]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+myos                          latest    15fc1d74c050   10 minutes ago   288MB
+itheima_centos                1         2cd338d71d29   7 weeks ago      463MB
+busybox                       latest    beae173ccac6   17 months ago    1.24MB
+nginx                         latest    605c77e624dd   17 months ago    141MB
+tomcat                        latest    fb5657adc892   17 months ago    680MB
+redis                         5.0       c5da061a611a   18 months ago    110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago    303MB
+registry                      latest    b8604a3fe854   19 months ago    26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago    204MB
+centos                        7         eeb6ee3f44bd   21 months ago    204MB
+[root@www ~]# docker history myos:latest    //制作的镜像是在原来镜像层上面又摞上一层
+IMAGE          CREATED         CREATED BY                                                          SIZE      COMMENT
+15fc1d74c050   8 minutes ago   /bin/bash                                                           83.9MB
+eeb6ee3f44bd   21 months ago   /bin/sh -c #(nop)  CMD ["/bin/bash"]                                0B
+<missing>      21 months ago   /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0                   B
+<missing>      21 months ago   /bin/sh -c #(nop) ADD file:b3ebbe8bd304723d4…   2                   04MB
+
+dockerfile语法格式：
+-FROM:基础镜像
+-MAINTAINNER:镜像创建者信息
+-EXPOSE:开放的端口
+-ENV:设置变量
+-ADD:复制文件到镜像
+-RUN:制作镜像时执行的命令，可以有多个
+-WORKDIR:定义容器默认工作目录
+-CMD:容器启动时执行的命令，仅可以有一条CMD
+
+下面都是非交互式使用dockerfile制作镜像:
+eg1:使用dockerfile制作镜像文件并生成容器启动：
+[root@www ~]# mkdir aa
+[root@www ~]# cd aa/
+[root@www aa]# touch Dockerfile
+[root@www aa]# vim Dockerfile
+[root@www aa]# docker run -it myos:latest   
+[root@6230e972b22c /]# history     //登录以下刚刚创建的myos容器查看它的执行命令历史
+    1  cd /etc/yum.repos.d/
+    2  ls
+    3  ifconfig
+    4  yum install vim net-tools psmisc iproute
+    5  cd
+    7  yum clean all
+    8  exit
+[root@www aa]# vim Dockerfile   //将刚刚的命令写入文件
+  1 FROM centos:7
+  2 RUN  yum -y install vim net-tools psmisc iproute
+[root@www aa]# docker build -t test:latest .  //启动执行文件
+[root@www aa]# docker images    //查看镜像test是否创建成功
+REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+test                          latest    5f6269cd560c   42 seconds ago   472MB
+myos                          latest    15fc1d74c050   42 minutes ago   288MB
+itheima_centos                1         2cd338d71d29   7 weeks ago      463MB
+busybox                       latest    beae173ccac6   17 months ago    1.24MB
+nginx                         latest    605c77e624dd   17 months ago    141MB
+tomcat                        latest    fb5657adc892   17 months ago    680MB
+redis                         5.0       c5da061a611a   18 months ago    110MB
+mysql                         5.6       dd3b2a5dcb48   18 months ago    303MB
+registry                      latest    b8604a3fe854   19 months ago    26.2MB
+192.168.111.136:5000/centos   7         eeb6ee3f44bd   21 months ago    204MB
+centos                        7         eeb6ee3f44bd   21 months ago    204MB
+[root@www aa]# docker run -it test:latest   //查看镜像文件能否启动为容器  若可以则说明刚才的创建过程都是没有问题的
+[root@da9b3727bd71 /]# ifconfig  //查看配置的ifconfig是否可以启用
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 8  bytes 656 (656.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@da9b3727bd71 /]# pstree  //查看pstree是否可以启用
+bash---pstree
+
+
+
+
+eg2:做一个sshd服务：
+[root@www ~]# cd bb
+[root@www bb]# ls
+Dockerfile
+[root@8647828b6b22 /]# history
+[root@www bb]# vim Dockerfile
+  1 FROM myos:latest
+  2 RUN  yum install -y openssh-server initscripts
+  3 RUN  sshd-keygen
+  4 RUN echo "a" |passwd --stdin root
+  5 ENV EnvironmentFile=/etc/sysconfig/sshd
+  6 EXPOSE 22
+  7 CMD ["/usr/sbin/sshd","-D"]
+[root@www bb]# docker build -t myos:sshd .
+[root@www bb]# docker images
+[root@www cc]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+myos                          sshd      f4a5a52e2038   27 hours ago    500MB
+[root@www bb]# docker run -itd myos:sshd
+[root@www bb]# docker inspect cbe8db7599f
+[root@www bb]# ssh 172.17.0.2
+The authenticity of host '172.17.0.2 (172.17.0.2)' can't be established.
+ECDSA key fingerprint is SHA256:Im5sZfR8teuEftj+4EpkdMrQr/QGJN/s/Waldu4ZfL8.
+ECDSA key fingerprint is MD5:6b:85:a9:e2:e9:12:02:05:b3:73:38:94:82:58:3a:05.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '172.17.0.2' (ECDSA) to the list of known hosts.
+root@172.17.0.2's password:
+[root@cbe8db7599f3 ~]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 59  bytes 7652 (7.4 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 41  bytes 5724 (5.5 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@cbe8db7599f3 ~]# pstree
+sshd---sshd---bash---pstree
+
+eg3部署http:
+[root@www ~]# mkdir cc
+[root@www ~]# cd cc/
+[root@www cc]# vim Dockerfile
+  1 FROM myos:latest
+  2 RUN yum install -y httpd
+  3 WORKDIR /var/www/html
+  4 ENV EnvironmentFile=/etc/sysconfig/httpd
+  5 ADD index.html index.html
+  6 EXPOSE 80
+  7 CMD ["/usr/sbin/httpd","-DFOREGROUND"]
+[root@www cc]# vim index.html
+  hello
+[root@www cc]# docker build -t myos:httpd .
+[root@www cc]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+myos                          httpd     f66edfe999e4   25 hours ago    529MB
+[root@www cc]# docker run -itd myos:httpd
+5a54e4b6eb9b9334defe8f3ea9f0f293122b676d50c73402507a661163daa03e
+[root@www cc]# docker exec -it 5a54e4b6 /bin/bash
+[root@5a54e4b6eb9b html]# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:03  txqueuelen 0  (Ethernet)
+        RX packets 8  bytes 656 (656.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@5a54e4b6eb9b html]# curl http://172.17.0.3
+hello
+
+
+
+
+
+自定义仓库：
+1.上传一个镜像仓库 192.168.112.128
+[root@naj1 ~]# yum install docker-distribution.x86_64
+[root@naj1 ~]# systemctl start docker-distribution.service
+[root@naj1 ~]# systemctl enable docker-distribution.service
+[root@naj1 ~]# ss -ltun
+Netid  State      Recv-Q Send-Q Local Address:Port               Peer Address:Port
+udp    UNCONN     0      0      127.0.0.1:323                   *:*             
+udp    UNCONN     0      0         [::1]:323                [::]:*              
+tcp    LISTEN     0      128       *:22                    *:*
+tcp    LISTEN     0      100    127.0.0.1:25                    *:*             
+tcp    LISTEN     0      128    [::]:22                 [::]:*
+tcp    LISTEN     0      100       [::1]:25                 [::]:*              
+tcp    LISTEN     0      70     [::]:33060              [::]:*
+tcp    LISTEN     0      128    [::]:5000               [::]:*
+tcp    LISTEN     0      128    [::]:3306               [::]:*
+[root@naj1 ~]# cat /etc/docker-distribution/registry/config.yml
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+    cache:
+        layerinfo: inmemory
+    filesystem:
+        rootdirectory: /var/lib/registry
+http:
+    addr: :5000
+	
+http://196.168.112.128:5000/v2/_catlog
+2.给仓库上传镜像192.168.112.129
+3.所有客户机配置使用新的镜像仓库，启动容器192.168.112.130
+
+
+
+
+
+
+为什么要使用k8s
+人们迫切需要一套管理系统，对docker及容器进行更高级灵活的管理
+k8s是容器集群管理系统 是一个开源平台 可以实现容器集群的自动化部署，自动化缩容，维护等功能
+   ----------k8s架构---------
+一个k8s系统，通常称为一个***k8s集群
+这个集群主要包括两个部分：
+**一个Master节点（主节点）**
+**一群Node节点（计算节点）**
+Node节点包括 **Docker、kubelet、kube-proxy、Fluentd、kube-dns**(可选)，还有就是**pod**
+    **pod**是Kubernetes是最基本的操作单元
+	一个pod代表着集群中运行的一个进程，它内部封装了一个或多个紧密相关的容器
+k8s（docker管理系统）搭建教程： 
+https://huaweicloud.csdn.net/63311d9dd3efff3090b52ad3.html?spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-125421244-blog-109592909.235%5Ev38%5Epc_relevant_default_base&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-125421244-blog-109592909.235%5Ev38%5Epc_relevant_default_base&utm_relevant_index=3
+rsync -rvza -e 'ssh -p 10022' /root/calico3.21.2.tgz root@192.168.31.133:/root/
+
+k8s初步使用：https://it.cha138.com/nginx/show-264401.html
+k8s命令使用：https://blog.csdn.net/footless_bird/article/details/125798691
+
+
+
+
+
+1:lvs原理是路由器（数据包转发）lvs相当于既是路由器又能实现nat  它与路由器的区别等于在路由器上多了一个调度功能 路由器只能往固定后台服务器上转发  而lvs可以调度到不同的服务器实现负载均衡
+lvs就在内核里面 但lvs只能做转发其他啥也做不了 性能高功能少
+nat模式下  lvs基本就是一个具有调度功能的路由器   
+dr模式 请求包（比较小）通过lvs调度器分发给后台服务器 但是响应包（比较大）可以直接从后端web服务器发给客户端无需经过lvs 这样就lvs瓶颈问题就解决了
+tun模式  用户和调度器在同一个局域网下 用户访问调度器 但是调度器和后端服务器之间需要跨过公网 所以要想让lvs调度器与后端服务器通信就要在lvs与后端服务器之间建立一个隧道 通过隧道实现通信 （实际应用较少）
+
+
+lvs(keepalived)：
+   1.自动匹配lvs规则
+   2.健康检查（若发现集群里的web1坏了 则立马把它从集群删掉）                                            |->linux(keepalived)
+   3.vrrp通过给lvs调度器配置主备来实现整个集群的高可用(lvs高可用和后台web高可用)结构图：pc(客户端)-----VIP   VRRP（调度使得同一时间只能有一台linux（这台linux其实就是lvs调度器）具有这个VIP ）
+                                                                                                        |->linux(keepalived)
+VIP：虚拟IP还有一个名字叫做浮动IP   
+   
+   
+2:nginx原理是代理（帮你干活）  nginx相当于一个软件                                
+
+
+数据备份方式：
+物理备份： 冷备：cp、tar
+ 物理备份操作：
+ -cp -r /var/lib/mysql  备份目录/mysql.bak
+ -tar -zcvf /root/mysql.tar.gz  /var/lib/mysql/*
+ 物理恢复操作：
+ -cp -r 备份目录/mysql.bak  /var/lib/mysql/
+ -tar -zxvf /root/mysql.tar.gz -C /var/lib/mysql/
+ -chown -R mysql:mysql /var/lib/mysql
+ 
+逻辑备份：使用软件自带的备份程序（备份命令）对数据做备份，在执行备份命令时，会根据已有的数据生成对应的命令，把命令存放到指定的备份文件里。
+：mysqldump //备份命令
+
+
+数据备份策略：
+  1.完全备份：备份所有数据（1张表、一个库、一台服务器） 
+   完全备份：----------mysqldump命令
+       备份命令格式：
+       ]# mysqldump -uroot -p密码  库名 > 目录/xxx.sql
+	   
+	   库名的表示方式： 
+	   --all-databases 或 -A       //所有库             无需创建库名
+	   数据库名                    //单个库   db3       需要创建库名
+	   数据库名  表名              //单张表   db3 user   需要创建库名
+	   -B 数据库1  数据库2         //多个库   -B db1 db2 db3  无需创建库名
+	   
+	   恢复命令格式
+	   ]# mysql -uroot -p密码 [库名] < 目录/xxx.sql
+备份命令
+# mkdir /mybak
+# mysqldump -uroot -p123456 --all -databases > /mybak/alldb.sql  无需创建库名
+# mysqldump -uroot -p123456 db1 >/mybak/db1.sql               需要创建库名
+# mysqldump -uroot -p123456 db3 user > /mybak/db3_user.sql    需要创建库名
+# mysqldump -uroot -p123456 -B db1 db3 > /mybak/twodb.sql   无需创建库名
+# ls /mybak/*.sql
+
+eg1 （备份单个库）
+备份--------mysqldump命令 192.168.4.50 
+# mkdir /mybak
+# mysqldump -uroot -p123456 db1 >/mybak/db1.sql               需要创建库名
+# ls /mybak/db1.sql
+# scp /mybak/db1.sql root@192.168.4.51:/root/
+恢复：192.168.4.51
+       完全恢复--------mysql命令  192.168.4.51
+	   # ls /root/*.sql
+	   # mysql -uroot -p123qqq...A
+	   mysql> drop database db1;
+	   mysql> create database db1;
+	   mysql> exit;
+	   #mysql -uroot -p123qqq...A db1 < /root/db1.sql
+	   #mysql -uroot -p123qqq...A
+	   mysql> use db1
+	   mysql> show tables;
+	   
+eg2(备份多个库)
+备份--------mysqldump命令 192.168.4.50 
+# mkdir /mybak
+# mysqldump -uroot -p123456 -B db1 db3 > /mybak/twodb.sql   无需创建库名
+# ls /mybak/db1.sql
+# scp /mybak/db1.sql root@192.168.4.51:/root/
+恢复：192.168.4.51
+       完全恢复--------mysql命令  192.168.4.51	
+       # ls /root/twodb.sql
+	   # mysql -uroot -p123qqq...A
+	   mysql> drop database db1;
+	   mysql> drop database db3;
+       mysql> show databases; 
+       mysql>exit;
+	   # mysql -uroot -p123qqq...A  < /root/twodb.sql
+	   # mysql -uroot -p123qqq...A
+       mysql> show databases;	   
+  2.差异备份：备份完全备份后，所有新产生的数据。
+  3.增量备份：备份上次备份后，所有新产生的数据(使用mysql服务的binlog日志实现数据的增量备份与恢复)
+             3.1 binlog日志的使用：使用binlog日志直接恢复备份数据
+                 3.1.1 binlog日志介绍
+				        什么是binlog日志？
+					      也称作二进制日志
+						  mysql服务日志文件的一种
+						  记录除查询之外的所有SQL命令
+						  可用于数据备份和恢复
+						  配置mysql主从同步的必要条件
+				 3.1.2 启用binlog日志
+				        启用binlog日志：log_bin
+						指定id值：server_id=数字
+						#vim /etc/my.cnf
+						  [mysqld]
+						  server_id=51
+						  log_bin
+						  :wq
+						#systemctl restart mysqld
+						#mysql -uroot -p123456
+						mysql>show master status;
+						#ls /var/lib/mysql
+						#cat /var/lib/mysql/host50-bin.index
+					      ./host50-bin.000001
+						自定义日志存储目录和日志文件名
+						#vim /etc/my.cnf
+						  [mysqld]
+						  server_id=50
+						  log_bin=/mylog/plj
+						  :wq
+						50]# mkdir /mylog
+						50]# chown mysql /mylog
+						50]# ls -ld /mylog
+						50]# systemctl restart mysqld
+						50]# ls /mylog/
+						50]# mysql -uroot -p123456
+						mysql> show master status;
+				 3.1.3 手动创建新的binlog日志文件以防止用于恢复数据的binlog文件被后面的操作污染(4种方法)
+				        50]# systemctl restart mysqld   （1）
+						]# ls /mylog/
+						
+						mysql>flush logs;               （2）//当需要恢复数据时，为了防止恢复数据后影响最新业务，需要执行flush logs，产生一个新的binlog文件，此时旧的binlog文件不会再有写入；
+						]# ls /mylog/
+						
+						50]# mysql -uroot -p123456 -e "flush logs"   （3）
+						50]# mysql -uroot -p123456 -e "show master status"
+						
+						50]# mysqldump -uroot -p123456 --flush- logs db3 > /mybak/db3.sql    （4）
+						]# ls /mylog/
+						50]# mysql -uroot -p123456 -e "show master status"
+						
+				 3.1.4 删除已有的binlog日志
+				        删除指定编号之前的binlog日志文件
+						mysql > purge master logs to "plj.000004";
+						
+					    删除所有的binlog日志，重建新日志
+						mysql> reset master;  //慎重操作 
+						
+				 3.1.5 查看binlog日志内容
+				       3.1.5.1 查看binlog日志信息
+					         命令格式]# mysqlbinlog 目录/binlog日志文件名
+					   3.1.5.2 修改binlog备份日志文件
+							 192.168.4.50:
+							 mysql> show master status;
+							 mysql> insert into db3.user(username,uid,gid) values ("xxx",1008,1008);
+							 mysql> insert into db3.user(username,uid,gid) values ("xhh",1009,1009);
+							 mysql> insert into db3.user(username,uid,gid) values ("dc",1010,1010);
+							 mysql> insert into db3.user(username,uid,gid) values ("tc",1010,1010);
+							 mysql> insert into db3.user(username,uid,gid) values ("xxc",1011,1011);
+							 mysql> show master status;
+							 mysql> select count(*) from db3.user;
+							 mysql> show master status;
+							 mysql> insert into db3.user(username,uid,gid) values ("cc",1012,1012);
+							 mysql> show master status;
+							 
+							 ]# mysqlbinlog /mylog/plj.000001    //读备份文件binlog内容 查看上述插入操作是否生效
+							 
+							 
+				       3.1.5.3 使用binlog日志恢复数据
+					           1 命令格式							  
+							   ]# mysqlbinlog 目录/日志文件 | mysql -uroot -p密码
+							   2 使用日志恢复数据练习
+							   50]# scp /mylog/plj.000001 root@192.168.4.51:/root/  //将数据发生变化的binlog日志复制给要恢复数据的主机51
+							   
+							   51]# mysql -uroot -p123qqq...A -e "select count(*) from db3.user"  //恢复前先查看一下原本文件里的数据量
+							   51]# mysqlbinlog /root/plj.000001      
+							   51]# mysqlbinlog /root/plj.000001 | mysql -uroot -p123qqq...A      //开始恢复
+							   51]# mysql -uroot -p123qqq...A -e "select count(*) from db3.user"  //查看恢复完成后数据条数
+					           51]# mysql -uroot -p123qqq...A -e "select * from db3.user"         //查看此时的具体数据
+					   
+			 3.2 使用binlog日志恢复指定范围内的数据	
+                 3.2.1 修改日志格式
+				       1 日志格式类型？
+					   2 查看默认使用的日志格式
+					   mysql> show variables like "binlog_format";
+					         默认是ROW
+					   3.修改日志格式
+					   192.168.4.50
+					   ]# vim /etc/my.cnf
+					   [mysqld]
+					   binlog_format="mixed"
+                       :wq
+
+                       50]# systemctl restart mysqld
+                       50]# mysql -uroot -p123456
+           			   mysql> show variables like "binlog_format";   
+					     日志格式变成MIXED
+					   mysql> reset master;
+					   mysql> show master status;
+					   mysql> insert into db3.user(username)values("aliceA");
+					   mysql> insert into db3.user(username)values("aliceB");
+					   mysql> delete from db3.user where username like 'alice%';					   
+					   mysql> show master status;
+					   mysql> exit;
+					   50]# mysqlbinlog /nylog/plj.000001 | grep -i insert
+					   50]# mysqlbinlog /nylog/plj.000001 | grep -i delete
+			     3.2.2 日志文件如何区分记录的多条sql命令
+				        偏移量
+						时间点
+				 3.2.3 命令格式
+				 ]# mysqlbinlog 选项 目录/日志文件名 | mysql -uroot -p密码
+				 偏移量
+				       --start- position=1054 --stop- position=2098
+				 时间点 
+                       --start-datetime="yyyy-mm-dd hh:mm:ss" --stop-datetime="yyyy-mm-dd hh:mm:ss"
+                 3.2.4 使用日志恢复数据练习
+				       50]# scp /mylog/plj.000001 root@192.168.4.51:/opt/
+                       51]# mysqlbinlog /opt/plj.000001      //查看从50拷贝过来的日志文件的内容 为了获取想要复制数据的范围
+					   51]# mysql -uroot -p123qqq...A -e  "select count(username) from db3.user"
+					   51]# mysqlbinlog --start-position=325 --stop-position=788 /opt/plj.000001 | mysql -uroot -p123qqq...A//恢复刚刚在50上插入的两条数据 aliceA 和 aliceB
+					   51]# mysql -uroot -p123qqq...A -e  "select count(username) from db3.user"
+					   51]# mysql -uroot -p123qqq...A -e  "select username from db3.user where username like 'alice%'"
+
+
+
+
+
+
+
+
+
+
+
+kubeadm init \
+--apiserver-advertise-address=192.168.112.128 \
+--control-plane-endpoint=master \
+--image-repository registry.cn-hangzhou.aliyuncs.com/lfy_k8s_images \
+--kubernetes-version v1.20.9 \
+--service-cidr=10.96.0.0/16 \
+--pod-network-cidr=192.169.0.0/16 
+
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of control-plane nodes by copying certificate authorities
+and service account keys on each node and then running the following as root:
+
+  kubeadm join master:6443 --token kcb3i6.74kydgv8nxi16r43 \
+    --discovery-token-ca-cert-hash sha256:fc083ddfd7c7fe0166359ed9d18aa11aecb04cb82255262bc6f628b1c282048e \
+    --control-plane
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join master:6443 --token kcb3i6.74kydgv8nxi16r43  --discovery-token-ca-cert-hash sha256:fc083ddfd7c7fe0166359ed9d18aa11aecb04cb82255262bc6f628b1c282048e
+
+
+
+echo "192.168.112.128  master" >> /etc/hosts
+
+kubectl drain 192.168.112.129(node1) --delete-local-data --force --ignore-daemonsets
+
+
+
+
+
+kubectl get pod -A | grep kube-proxy | awk '{system("kubectl delete pod "$2" -n kube-system")}'
+pod "kube-proxy-689h8" deleted
+
+报错原因：https://blog.csdn.net/qq120631157/article/details/128672524
+资源地址：https://download.csdn.net/download/qq120631157/87382343
