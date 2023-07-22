@@ -1,3 +1,4 @@
+﻿已加入版本管理，GitHub链接：https://github.com/nieaojie/xlsDocumnet
 源码包的编译安装：https://blog.csdn.net/weixin_34348805/article/details/89834157
   1.安装make、gcc
   2.解压tar包、释放源代码到指定目录
