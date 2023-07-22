@@ -3903,7 +3903,7 @@ kubeadm join master:6443 --token kcb3i6.74kydgv8nxi16r43  --discovery-token-ca-c
 
 
 真实要加的东西
-echo "192.168.112.128  master" >> /etc/hosts
+echo "1912.168.112.128  master" >> /etc/hosts
 
 kubectl drain 192.168.112.129(node1) --delete-local-data --force --ignore-daemonsets
 
