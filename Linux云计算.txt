@@ -3901,7 +3901,7 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join master:6443 --token kcb3i6.74kydgv8nxi16r43  --discovery-token-ca-cert-hash sha256:fc083ddfd7c7fe0166359ed9d18aa11aecb04cb82255262bc6f628b1c282048e
 
 
-
+真实要加的东西
 echo "192.168.112.128  master" >> /etc/hosts
 
 kubectl drain 192.168.112.129(node1) --delete-local-data --force --ignore-daemonsets
